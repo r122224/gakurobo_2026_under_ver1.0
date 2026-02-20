@@ -29,6 +29,8 @@ extern int collect_phase;
 extern bool set_print;
 
 extern forest_route route[7];
+extern bool front_syusoku;
+extern bool back_syusoku;
 
 PathTracking motion(FOLLOW_COMMAND); // 経路追従(接線方向向く)モードでとりあえず初期化
 
@@ -365,9 +367,22 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         motion.setPathNum(0, 0);
         setConvPara(0.05, 0.992);
         send_num = 0;
-        phase = 100;
-        phase = 200;
-        phase = 300;
+        // phase = 100;
+        // phase = 200;
+        // phase = 300;
+        if ((nextPhase & PUSH_BUTTON) == PUSH_BUTTON) {
+            // phase = 1;//phase = 107;
+            if(flag_simu || flag_retry_forest){
+                // phase = 107;
+                phase = 200;
+            }else{
+                if(flag_retry){
+                    phase = 300;//ラック前
+                }else{
+                    phase = 100;
+                } 
+            }
+        }
     break;
     case 100:
         send_num = 1;//ハンド展開
@@ -383,13 +398,16 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         gpath_y[0] = gPosi.y;
         gpath_y[1] = 1;
         gpath_y[2] = 0.8;
-        // gpath_y[3] = 0.52;
-        gpath_y[3] = 0.45;
+        gpath_y[3] = 0.52;
+        // gpath_y[3] = 0.45;
         set_para2(gpath_x, gpath_y, M_PI/2, 0.5, 3.00, 3.00);
         phase = 101;
     break;
-    // case 101: //ベッドラックに移動＆回収
+    case 101: //ベッドラックに移動＆回収
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 102, DEFAULT);
+        if ((nextPhase & PUSH_BUTTON) == PUSH_BUTTON) {
+            phase = 102;
+        }
     break;
     case 102://リミットスイッチ反応したら止める
         //
@@ -418,9 +436,16 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         refV = pathTrackingMode(POSITION_PID, 0, 107, DEFAULT);
     break;
     case 107:
-        send_num = 2;
-        if(up_num == 2)//槍先を離した
-            phase = 108;
+        // send_num = 2;
+
+        // if(up_num == 2)//槍先を離した
+        //     phase = 108;
+        if ((nextPhase & PUSH_BUTTON) == PUSH_BUTTON) {
+            send_num = 2;
+            if(up_num == 2){//槍先を離した
+                phase = 108;
+            }
+        }
     break;
     case 108: //少し離れる
         motion.setPathNum(0, 0);
@@ -452,6 +477,9 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 202, DEFAULT);
     break;
     case 202://旋回の確認
+        if(route[route_num].num >= 12){
+            phase = 240;
+        }
         //ひとつ前のマスに移動
         if(forest[route[route_num].num].y == forest[route[route_num + 1].num].y && forest[route[route_num + 1].num].x - forest[route[route_num].num].x == 1.2){
             setz = 0.00;
@@ -512,7 +540,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
             case -2:
                 //下段回収
                 hight_flag = -2;
-                // set_front_posi = LOW_COLLECT_POSI;
+                set_front_posi = LOW_COLLECT_POSI;
             break;
         }
         switch (forest[route[route_num + 2].num].hight - forest[route[route_num].num].hight) {
@@ -553,14 +581,18 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
             break;
         }
         set_para(setx , sety, setz, 0.3, 3.00, 1.00);
+        //////
+        if(front_syusoku)
+            phase = 212;
     break;
     case 212: //回収地点に行く
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 2213, DEFAULT);
     break;
     case 2213:
-        if(hight_flag == -2)
-            set_front_posi = LOW_COLLECT_POSI;
-        else
+        // if(hight_flag == -2)
+        //     set_front_posi = LOW_COLLECT_POSI;
+        // else
+
             phase = 213;
     break;
     case 213: //
@@ -572,13 +604,18 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
             phase = 2214;
     break;
     case 2214:
-        if(hight_flag == -2)//格納する//格納完了したら214にする
+        send_num = 11;
+        if(hight_flag == -2){//格納する//格納完了したら214にする
             set_front_posi = STORAGE_POSI;
-        else
+            if(front_syusoku){
+                send_num = 12;
+                phase = 214;
+            }
+        }else
             phase = 214;
     break;
     case 214://MFの中心に戻る
-        send_num = 11;
+        // send_num = 11;
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 215, DEFAULT);
     break;
     case 215:
@@ -590,8 +627,13 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         if(hight_flag == 2 && hight_flag2 == 2){
             set_front_posi = HIGH_COLLECT_POSI;
             phase = 202;
-        }else//
+        }else{
             set_front_posi = STORAGE_POSI;
+            if(front_syusoku){
+                send_num = 12;
+                phase = 202;
+            }
+        }
             //収束したら格納していいよ，格納
             //格納終わったらphase = 202に返す
 
@@ -621,7 +663,10 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
             case +2:
                 //段越え
                 hight_flag = 2;
-                // set_front_posi = HIGH_COLLECT_POSI;
+                set_front_posi = STEP_UP_FRONT_HIGH;
+                set_back_posi = STEP_UP_BACK_HIGH;
+                if(back_syusoku == 1 && front_syusoku == 1)
+                    phase = 223;
                 //段越えする
             break;
             case  0:
@@ -673,10 +718,15 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
             break;
         }
         set_para(setx , sety, setz, 0.3, 3.00, 1.00);
+        phase = 224;
     break;
 
     case 224: //はじにいどうする
-        refV = pathTrackingMode(FOLLOW_COMMAND, 0, 225, DEFAULT);
+        refV = pathTrackingMode(FOLLOW_COMMAND, 0, 2225, DEFAULT);
+    break;
+
+    case 2225:
+        //段越え段降りの処理
     break;
 
     case 225://mainで登った，または降りたらこのフェーズに移行するに
@@ -742,7 +792,8 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     break;
 
     case 233: //mainで前の昇降が収束していたら234にする
-
+        if(front_syusoku)
+            phase = 234;
     break;
 
     case 234:
@@ -752,10 +803,12 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     break;
 
     case 235://前後昇降の設定
+        send_num = 11;
         switch (hight_flag) {
             case 2://段越え
-                // set_front_posi
-                // set_back_posi
+                set_front_posi = STEP_UP_FRONT_HIGH;
+                set_back_posi = STEP_UP_BACK_HIGH;
+                phase = 2236;
             break;
             case 0://中段
                 phase = 236;
@@ -763,10 +816,14 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
                 // set_back_posi
             break;
             case -2://段降り
-                // set_front_posi
-                // set_back_posi
+                set_front_posi = STEP_DOWN_FRONT_LOW;
+                set_back_posi = STEP_DOWN_BACK_LOW;
+                phase = 2236;
             break;
         }
+    break;
+
+    case 2236:
     break;
 
     case 236://段移動完了後
@@ -783,7 +840,10 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     break;
 
 
+
+
     case 300:
+        
     break;
 
 

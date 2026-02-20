@@ -121,22 +121,22 @@ struct pidGain {
 #define BLUE 1
 #define COLLECT_NUM 4
 
-#define front 419.48
-#define back  204.91
+#define front_lift_init 419.48
+#define back_lift_init  204.91
 
 #define HIGH_COLLECT_POSI   222.48
 #define LOW_COLLECT_POSI     22.48
 #define STORAGE_POSI         92.48
 
-#define STEP_UP_FRONT_HIGH     220
-#define STEP_UP_FRONT_LOW      -10
-#define STEP_UP_BACK_HIGH       20
-#define STEP_UP_BACK_LOW      -210
+#define STEP_UP_FRONT_HIGH     240
+#define STEP_UP_FRONT_LOW      -40
+#define STEP_UP_BACK_HIGH       40
+#define STEP_UP_BACK_LOW      -240
 
-#define STEP_DOWN_FRONT_HIGH    20
+#define STEP_DOWN_FRONT_HIGH    30
 #define STEP_DOWN_FRONT_LOW   -180
-#define STEP_DOWN_BACK_HIGH    220
-#define STEP_DOWN_BACK_LOW     -20
+#define STEP_DOWN_BACK_HIGH    230
+#define STEP_DOWN_BACK_LOW     -30
 
 #define FRONT_INIT          419.48
 #define BACK_INIT           204.91
