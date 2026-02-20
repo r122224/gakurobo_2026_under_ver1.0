@@ -141,6 +141,8 @@ struct pidGain {
 #define FRONT_INIT          419.48
 #define BACK_INIT           204.91
 
+#define EDGE_MOVE 0.308
+
 #define DFRONT 0
 #define DRIGHT 1
 #define DLEFT  2

@@ -458,13 +458,20 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
             direction_flag = DFRONT;
         }
         //右隣
-        else if(forest[route[route_num + 1].num].y - forest[route[route_num].num].y == 1.2)
+        else if(forest[route[route_num + 1].num].y - forest[route[route_num].num].y == 1.2){
             setz = -M_PI/2;
+            direction_flag = DRIGHT;
+        }
+            
         //左隣
-        else if(forest[route[route_num + 1].num].y - forest[route[route_num].num].y == -1.2)
+        else if(forest[route[route_num + 1].num].y - forest[route[route_num].num].y == -1.2){
             setz = M_PI/2;
-        else if(forest[route[route_num].num].y == forest[route[route_num + 1].num].y && forest[route[route_num + 1].num].x - forest[route[route_num].num].x == -1.2)
+            direction_flag = DLEFT;
+        }  
+        else if(forest[route[route_num].num].y == forest[route[route_num + 1].num].y && forest[route[route_num + 1].num].x - forest[route[route_num].num].x == -1.2){
             setz = M_PI;
+            direction_flag = DBACK;
+        }
         // else
         //     ;
         motion.setPathNum(0, 0);
@@ -488,7 +495,9 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
             break;
         }
     break;
-    case 210: //回収
+
+    ///////回収///////
+    case 210:
         switch (forest[route[route_num + 1].num].hight - forest[route[route_num].num].hight) {
             case +2:
                 //上段回収
@@ -523,7 +532,27 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     break;
     case 211:
         //前に移動．ただし，上回収のときはきをつける
-        
+        motion.setPathNum(0, 0);
+        setConvPara(0.01, 0.998);
+        switch (direction_flag) {
+            case DFRONT:
+                setx = forest[route[route_num].num].x + EDGE_MOVE;
+                sety = forest[route[route_num].num].y;
+            break;
+            case DRIGHT:
+                setx = forest[route[route_num].num].x;
+                sety = forest[route[route_num].num].y + EDGE_MOVE;
+            break;
+            case DLEFT:
+                setx = forest[route[route_num].num].x;
+                sety = forest[route[route_num].num].y - EDGE_MOVE;
+            break;
+            case DBACK:
+                setx = forest[route[route_num].num].x - EDGE_MOVE;
+                sety = forest[route[route_num].num].y;
+            break;
+        }
+        set_para(setx , sety, setz, 0.3, 3.00, 1.00);
     break;
     case 212: //回収地点に行く
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 2213, DEFAULT);
@@ -543,7 +572,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
             phase = 2214;
     break;
     case 2214:
-        if(hight_flag == -2)
+        if(hight_flag == -2)//格納する//格納完了したら214にする
             set_front_posi = STORAGE_POSI;
         else
             phase = 214;
@@ -555,16 +584,23 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     case 215:
         //次が回収しないで段越えのときは昇降そのまま
         //次が通過でhight_flag = 2で次も2のとき昇降そのまま段越えの
-        if(hight_flag == 2 && hight_flag2 == 2)
-            set_front_posi = HIGH_COLLECT_POSI;
-        else//
-            set_front_posi = STORAGE_POSI;
-
         route[route_num + 1] = route[route_num];
         route_num += 1;
 
-        phase = 202;
+        if(hight_flag == 2 && hight_flag2 == 2){
+            set_front_posi = HIGH_COLLECT_POSI;
+            phase = 202;
+        }else//
+            set_front_posi = STORAGE_POSI;
+            //収束したら格納していいよ，格納
+            //格納終わったらphase = 202に返す
+
+        // route[route_num + 1] = route[route_num];
+        // route_num += 1;
+
     break;
+
+
     //通過する
     case 220:
         switch (forest[route[route_num + 2].num].hight - forest[route[route_num].num].hight) {
@@ -618,8 +654,25 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         //はじまで移動する
         motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
-
-        set_para(setx, sety, setz, 0.5, 3.00, 3.00);
+        switch (direction_flag) {
+            case DFRONT:
+                setx = forest[route[route_num].num].x + EDGE_MOVE;
+                sety = forest[route[route_num].num].y;
+            break;
+            case DRIGHT:
+                setx = forest[route[route_num].num].x;
+                sety = forest[route[route_num].num].y + EDGE_MOVE;
+            break;
+            case DLEFT:
+                setx = forest[route[route_num].num].x;
+                sety = forest[route[route_num].num].y - EDGE_MOVE;
+            break;
+            case DBACK:
+                setx = forest[route[route_num].num].x - EDGE_MOVE;
+                sety = forest[route[route_num].num].y;
+            break;
+        }
+        set_para(setx , sety, setz, 0.3, 3.00, 1.00);
     break;
 
     case 224: //はじにいどうする
@@ -662,7 +715,24 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     case 231://はじに移動する//mainで上と中段のときは収束したら変更する
         motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
-
+        switch (direction_flag) {
+            case DFRONT:
+                setx = forest[route[route_num].num].x + EDGE_MOVE;
+                sety = forest[route[route_num].num].y;
+            break;
+            case DRIGHT:
+                setx = forest[route[route_num].num].x;
+                sety = forest[route[route_num].num].y + EDGE_MOVE;
+            break;
+            case DLEFT:
+                setx = forest[route[route_num].num].x;
+                sety = forest[route[route_num].num].y - EDGE_MOVE;
+            break;
+            case DBACK:
+                setx = forest[route[route_num].num].x - EDGE_MOVE;
+                sety = forest[route[route_num].num].y;
+            break;
+        }
         set_para(setx, sety, setz, 0.5, 3.00, 3.00);
         phase = 232;
     break;
@@ -700,6 +770,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     break;
 
     case 236://段移動完了後
+        set_front_posi = STORAGE_POSI;
         motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
         set_para(forest[route[route_num + 1].num].x, forest[route[route_num + 1].num].y, setz, 1.0, 3.00, 3.00);
