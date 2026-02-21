@@ -35,9 +35,9 @@
 
 
 // |-----|-----|-----|
-// | 12  | 13- | 14  | 出口
+// | 1 2 | 1 3 | 1 4 | 出口
 // |-----|-----|-----|
-// | -9  | 10  | 11  |
+// |  9  | 1 0 | 1 1 |
 // |-----|-----|-----|
 // |  6  |  7  |  8  |
 // |-----|-----|-----|
@@ -827,37 +827,6 @@ int hold_phase = 0;
 int spear_rack_true[6] =  {0,0,0,0,0,0};//手前が0
 
 
-// int silo_num = 0, second_silo_num = 0, second_silo_num2 = 0;
-int receive_collect_ball[2] = {0,0};
-// int receive_ball_posi[2][2] = {
-//         {0,0},
-//         {0,0}
-//     };
-// int receive_ball_num[2] = {0,0};
-// int receive_remove_dir;
-// int receive_remove_dist[2];
-// int pre_collect_ball;
-// int collect_ball;
-// int pre_ball_posi_x;
-// int pre_ball_posi_y;
-// int ball_posi_x;
-// int ball_posi_y;
-// int pre_collect_ball_num;
-// int collect_ball_num;
-// int pre_remove_dir = 1;
-// int next_remove_dir = 1;
-// int first_remove_dir = 1;
-// int send_ball_num = 16;
-// int send_dir = 1;
-// int receive_collect_angle[2] = {90,90};
-// int stolen_receive_len = 0;
-// int receive_scat_mode = 1;
-// int receive_scat_area = 5;
-// int receive_dirs = 0;
-// int receive_cellect_dir = 0;
-// int receive_pr_count = 0;
-
-
 Ticker flipper;            // void timer_warikomi() 用
 Timer timer;               //経過時間確認用
 bool flag_int = false; // 15msごとにtrueになる
@@ -1141,7 +1110,7 @@ bool receiveData_pc(int mode){
         c = pc.getc();
         if(c == '\n' && (readCount == 3)){//終端コードのチェック
             if(buf[2] == checksum){//通信数とチェックサムの確認
-                receive_collect_ball[0] = (int)buf[0];
+                // receive_collect_ball[0] = (int)buf[0];
                 // receive_remove_dir = (int)buf[1];
                 // receive_ball_posi[0][0] = ((intbuf[2] << 8) | (int)buf[3];
                 // receive_ball_posi[0][1] = ((int)buf[4] << 8) | (int)buf[5];
@@ -1869,10 +1838,10 @@ sprintf(str,"[INFO]bno on\n");
     static bool bno_up = false;
 
 
-    bool stepup_flag = false;
-    int stepup_count = 0;
-    bool stepdown_flag = false;
-    int stepdown_count = 0;
+    static bool stepup_flag = false;
+    static int stepup_count = 0;
+    static bool stepdown_flag = false;
+    static int stepdown_count = 0;
     // int flag_lift;
     // if(flag_use_sensor){
     //     // spi.format(8,3);
@@ -2228,8 +2197,19 @@ sprintf(str,"[INFO]bno on\n");
             // sprintf(str, "int_time,gPosi.y,gPosi.x,gPosi.z,,refV.y,refV.x,refV.z,,preangle,"
             //      "phase,pathnum,t_be,syusoku,onx,ony,angle,,Px,Py,,lrtb.y,lrtb.x,lrtb.z,enc0,enc1,angle,dist,dete,n_speed,lidat_a,,,,,getx,gety,upenc0,upenc1\n");
             // sprintf(str, "time,time_sum,gPosi.y,gPosi.x,gPosi.z,enc3_0,enc3_1,enc4_0,enc4_1,upenc0,upenc1,get_anglex,get_angley,rps1,rps2,errorstate\n");
-            sprintf(str, "time,phase,syusoku,gPosi.y,gPosi.x,gPosi.z,,refV.y,refV.x,refV.z,,lrtb.y,lrtb.x,lrtb.z,Py,Px,,send_num,air,kouden1,kouden2,kouden3,cubeid,nextid, overstep, downstep, holdstep,,cmd0,cmd1,cmd2,,mode,nbox,,limit,,up,lift,c_M,back,rad,ref,,\n");
+            // sprintf(str, "time,phase,syusoku,gPosi.y,gPosi.x,gPosi.z,,refV.y,refV.x,refV.z,,lrtb.y,lrtb.x,lrtb.z,Py,Px,,send_num,air,kouden1,kouden2,kouden3,cubeid,nextid, overstep, downstep, holdstep,,cmd0,cmd1,cmd2,,mode,nbox,,limit,,up,lift,c_M,back,rad,ref,,\n");
+            // sprintf(str, "time,phase,syusoku,gPosi.y,gPosi.x,gPosi.z,,refV.y,refV.x,refV.z,,lrtb.y,lrtb.x,lrtb.z,Py,Px,,send_num,air,kouden1,kouden2,kouden3,cubeid,nextid, overstep, downstep, holdstep,,cmd0,cmd1,cmd2,,mode,nbox,,limit,,up,lift,c_M,back,rad,ref,,\n");
+            sprintf(str, "time,phase,syusoku,gPosi.y,gPosi.x,gPosi.z,,refV.y,refV.x,refV.z,,lrtb.y,lrtb.x,lrtb.z,Py,Px,,send_num,air,kouden1,front_syusoku,kouden3,back_syusoku,back_wheel_flag, stepup_count, stepdown_count, holdstep,,cmd0,cmd1,cmd2,,mode,nbox,,limit,,up,lift,c_M,back,rad,ref, ,\n");
             mySD.write_logdata(str);
+            // sprintf(str, "gPosi.y,gPosi.x,gPosi.z,refV.y,refV.x,refV.z,pre_angle,autonomous.phase,autonomous.getPathNum(),autonomous.get_t_be(),autonomous.onx(),autonomous.ony(),autonomous.angle()");
+            // mySD.write_logdata(str);
+            // sprintf(str,",autonomous.Px(3),autonomous.Py(3),autonomous.syusoku,timer.read_ms(),lrtbPosi.y,lrtbPosi.x,lrtbPosi.z,stepup_count,stepup_flag,stepdown_count,stepdown_flag,front_syusoku,back_syusoku,roboclawCmd0,roboclawCmd1,roboclawCmd2,air_up_flag");
+            // mySD.write_logdata(str);
+            // sprintf(str, "autonomous.send_num,kouden1read,kouden2read,kouden3read,cubeIndex,nextIndex,overstep_phase,downstep_phase,hold_phase,mode,next_box_state,limit4read,limit5read,autonomous.up_num");
+            // mySD.write_logdata(str);
+            // sprintf(str, ",autonomous.route_num,route[autonomous.route_num].num,back_wheel_flag,autonomous.rotate_radian,ref_lift_front_posi,ref_lift_back_posi,front_lift_posi,back_lift_posi\n");
+
+            // mySD.write_logdata(str);
             int i = 0;
             while (i < SDcount) {
                 USER_LED = !USER_LED;
@@ -2237,7 +2217,9 @@ sprintf(str,"[INFO]bno on\n");
             //   "%d,%lf,%lf,%lf,,%lf,%lf,%lf,,%lf,%d,%d,%lf,%d,%lf,%lf,%lf,,%lf,%lf,,%lf,%lf,%lf,%d,%d,%lf,%lf,%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%d,%d,%d,%d\n",
             //   e[i], A[i], B[i], C[i], D[i], E[i], F[i], K[i], a[i], b[i], G[i], d[i], H1[i], I[i], J[i], L4[i], N[i], M[i], O[i], P[i], f[i] ,g[i],Q[i],R[i],f[i],S[i],T[i],U[i],V[i],W[i],X[i],Y[i],h[i],i_[i],j[i],k[i]);
             // sprintf(str,"%d,%d,%lf,%lf,%lf,%d,%d,%d,%d,%d,%d,%d,%d,%d\n",e[i],n[i],A[i],B[i],C[i],l[i],m[i],f[i],g[i],j[i],k[i],h[i],i_[i],a[i]);
-                sprintf(str,"%d,%d,%d,%lf,%lf,%lf,,%lf,%lf,%lf,,%lf,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%lf,%lf,%lf,,%d,%d,,%d,%d,%d,%d,%d,%d,%lf,%lf,%lf ,%lf,%lf\n",e[i], a[i], d[i], A[i], B[i], C[i], D[i], E[i], F[i], M[i], O[i], P[i], N[i], L4[i], g[i], f[i], h[i], j[i], p[i], k[i], l[i], m[i], n[i], o[i], V[i], R[i], W[i],q[i], r[i],s[i],t[i],u[i],v[i],r[i],w[i],X[i],Y[i],Z[i],Q[i],G[i]);
+                // sprintf(str,"%d,%d,%d,%lf,%lf,%lf,,%lf,%lf,%lf,,%lf,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%lf,%lf,%lf,,%d,%d,,%d,%d,%d,%d,%d,%d,%lf,%lf,%lf ,%lf,%lf\n",e[i], a[i], d[i], A[i], B[i], C[i], D[i], E[i], F[i], M[i], O[i], P[i], N[i], L4[i], g[i], f[i], h[i], j[i], p[i], k[i], l[i], m[i], n[i], o[i], V[i], R[i], W[i],q[i], r[i],s[i],t[i],u[i],v[i],r[i],w[i],X[i],Y[i],Z[i],Q[i],G[i]);
+                // mySD.write_logdata(str);
+                sprintf(str,"%d,%d,%d,%lf,%lf,%lf,,%lf,%lf,%lf,,%lf,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%lf,%lf,%lf,,%d,%d,,%d,%d,%d,%d,%d,%d,%lf,%lf,%lf ,%lf,%lf ,%lf ,%d\n",e[i], a[i], d[i], A[i], B[i], C[i], D[i], E[i], F[i], M[i], O[i], P[i], N[i], L4[i], g[i], f[i], h[i], j[i], p[i], k[i], l[i], m[i], n[i], o[i], V[i], R[i], W[i],q[i], r[i],s[i],t[i],u[i],v[i],r[i],w[i],X[i],Y[i],Z[i],Q[i],G[i],T[i],c[i]);
                 mySD.write_logdata(str);
                 i++;
             }
@@ -2384,32 +2366,32 @@ sprintf(str,"[INFO]bno on\n");
             // pc.printf("%lf",get_lift_front_posi);
             // get_lift_front_posi += height_count(get_lift_front_count,pre_get_lift_front_count,FRONT_R);
             
+
+            //昇降の高さ(mm)
             if(set_height_front){
                 double front_lift_diff = enc_to_lift_height(get_lift_front_count,pre_get_lift_front_count,FRONT_R);
                 get_lift_front_posi += front_lift_diff;
                 // front_lift_posi = (-0.0696 * get_lift_front_posi - 0.5299)*10*2;
-                front_lift_posi = -(-0.0683 * get_lift_front_posi)*10*2 + 419.48;
+                front_lift_posi = -(-0.0683 * get_lift_front_posi)*10*2 + front_lift_init;
             }
-
 
             if(set_height_back){
                 double back_lift_diff = enc_to_lift_height(get_lift_back_count,pre_get_lift_back_count,FRONT_R);
                 get_lift_back_posi += back_lift_diff;
                 // back_lift_posi = (-0.0677 * get_lift_back_posi - 0.0626)*10*2;
-                back_lift_posi = -(-0.067 * get_lift_back_posi)*10*2 + 204.91;
+                back_lift_posi = -(-0.067 * get_lift_back_posi)*10*2 + back_lift_init;
             }
-            if(limit8read == false ){
+
+            if(!limit8read){
                 set_height_front = true;
-                front_lift_posi = 419.48;
+                front_lift_posi = front_lift_init;
                 get_lift_front_posi = 0;
             }
             if(!limit9read){
                 set_height_back = true;
-                back_lift_posi = 204.91;
+                back_lift_posi = back_lift_init;
                 get_lift_back_posi = 0;
             }
-            // front_lift_posi = -0.0716 * get_lift_front_posi - 1.4012;
-            // back_lift_posi = -0.0677 * get_lift_back_posi - 0.1584;
 
             //足回り自己位置-------------------------------------------------------------------------
             double get_anglez = 0.000;
@@ -2450,7 +2432,6 @@ sprintf(str,"[INFO]bno on\n");
                 }
                 encX_count = -encX.getCount();
             }
-            
 
             //エンコーダの回転補正
             // encY_count = encY_count + (2000 * ENC_Y_R * anglez * sin(deg2rad(ENC_Y_THETA)) / 2 / M_PI / RADIUS_Y);
@@ -2462,19 +2443,8 @@ sprintf(str,"[INFO]bno on\n");
 
             getPosi = platform.getPosi(encX_count, encY_count, get_anglez);
 
-//             0
-//     {4,0}, {4,1}, {4,2},
-//     {3,0}, {3,1}, {3,2},
-//     {2,0}, {2,1}, {2,2},
-//     {1,0}, {1,1}, {1,2},
-//     {0,0}, {0,1}, {0,2},
-//     {-1,0}, {-1,1}, {-1,2}
-// 15,16,17
-// 12,13,14
-// 9,10,11
-// 6,7,8
-// 3,4,5
-// 0,1,2,        
+
+
             
             if(route[autonomous.route_num].num <= 2){
                 cubePosi.x = -1;
@@ -2770,7 +2740,7 @@ sprintf(str,"[INFO]bno on\n");
 
                     }else if(flag_lrtb_in){
                         if(autonomous.phase == 62){
-                            lrtbPosi.y = distance_in + 0.15 - 0.025;//ラックを見る
+                            lrtbPosi.y = distance_in + 0.25 - 0.025;//ラックを見る
                             if(fabs(gPosi.y - lrtbPosi.y) < lrtb_diff_limit){
                                 platform.setAxisPosi(lrtbPosi.y, POSIY);
                             }
@@ -2881,6 +2851,7 @@ sprintf(str,"[INFO]bno on\n");
             }
 
             //limitスイッチによる自己位置補正（誤差の修正なのでgPosi.zを基準に．．．）232,224,212
+            //212,232,224
             if((autonomous.phase == 212 || autonomous.phase == 224 || autonomous.phase == 232) && !limit4read && !limit5read){//後
                 // platform.setPosi(coords {gPosi.x, gPosi.y, 0.0});
                 double z_norm = atan2(sin(gPosi.z), cos(gPosi.z));
@@ -2929,13 +2900,11 @@ sprintf(str,"[INFO]bno on\n");
                     flag_lift = 2;
                     autonomous.set_front_posi = STORAGE_POSI;
                     autonomous.set_back_posi = STEP_UP_BACK_HIGH;
-                    pc.printf("DDD");
                     // front_lift_posi = STORAGE_POSI;
                     // back_lift_posi = STEP_UP_BACK_HIGH;
                 }
             break;
             case 2:
-                pc.printf("SS22");
                 ref_lift_front_posi = autonomous.set_front_posi;
                 ref_lift_back_posi = autonomous.set_back_posi;
                 if(autonomous.phase == 2225 || autonomous.phase == 2236){
@@ -2950,7 +2919,7 @@ sprintf(str,"[INFO]bno on\n");
                         break;
                     }
                 }
-
+                //212,232,224
                 if(autonomous.phase == 212){
                     if(pre_kouden1read == 1 && kouden1read == 0)
                         autonomous.phase = 213;
@@ -2974,31 +2943,37 @@ sprintf(str,"[INFO]bno on\n");
         }
         //端移動 232,224,212
 
+        stepup_flag = true;
+        stepup_count = 2;
 
         if(stepup_flag){
             switch (stepup_count) {
-                case 1:
-                    ref_lift_front_posi = STEP_UP_FRONT_HIGH;
-                    ref_lift_back_posi = STEP_UP_BACK_HIGH;
+                case 1://上がる
+                    ref_lift_front_posi = STEP_UP_FRONT_LOW;
+                    ref_lift_back_posi = STEP_UP_BACK_LOW;
                     if(back_syusoku == 1 && front_syusoku == 1)
                         stepup_count = 2;
                 break;
                 case 2://前移動
-                    back_wheel_flag = true;
+                    vel_lift_back = 0.08;
                     ControlMode = MANUAL_MODE;
                     autostep_mode = true;
+                    air_state = true;
+                    air_up_flag = true;
                     refV.x = 0.3;
                     if(pre_kouden3read == 1 && kouden3read == 0){//止める
-                        back_wheel_flag = false;
+                        vel_lift_back = 0.00;
                         ControlMode = AUTO_MODE;
                         autostep_mode = false;
                         refV.x = 0.0;
+                        air_state = false;
+                        air_up_flag = false;
                         stepup_count = 3;
                     }
                 break;
-                case 3:
-                    ref_lift_front_posi = STEP_UP_FRONT_LOW;
-                    ref_lift_back_posi = STEP_UP_BACK_LOW;
+                case 3://昇降を上げる
+                    ref_lift_front_posi = STORAGE_POSI;
+                    ref_lift_back_posi = STEP_UP_BACK_HIGH;
                     if(back_syusoku == 1 && front_syusoku == 1){
                         stepup_count = 0;
                         stepup_flag = false;
@@ -3034,29 +3009,33 @@ sprintf(str,"[INFO]bno on\n");
                 // break;
             }
         }
-
+        // vel_lift_back = 0.03;
         if(stepdown_flag){
             switch (stepdown_count) {
-                case 1:
+                case 1://足下げる
                     ref_lift_front_posi = STEP_DOWN_FRONT_LOW;
                     ref_lift_back_posi = STEP_DOWN_BACK_LOW ;
-                    if(back_syusoku == 1 && front_syusoku == 1)
-                        stepup_count = 2;
+                    if(back_syusoku == true && front_syusoku == true)
+                        stepdown_count = 2;
                 break;
                 case 2://前移動
-                     back_wheel_flag = true;
+                    vel_lift_back = 0.03;
                     ControlMode = MANUAL_MODE;
                     autostep_mode = true;
+                    air_state = true;
+                    air_up_flag = true;
                     refV.x = 0.3;
                     if(pre_kouden3read == 1 && kouden3read == 0){//止める
-                        back_wheel_flag = false;
+                        vel_lift_back = 0.00;
                         ControlMode = AUTO_MODE;
                         autostep_mode = false;
+                        air_state = false;
+                        air_up_flag = false;
                         refV.x = 0.0;
-                        stepup_count = 5;
+                        stepdown_count = 3;
                     }
                 break;
-                case 3:
+                case 3://機体下げる
                     ref_lift_front_posi = STEP_DOWN_FRONT_HIGH;
                     ref_lift_back_posi = STEP_DOWN_BACK_HIGH;
                     if(back_syusoku == 1 && front_syusoku == 1){
@@ -3096,7 +3075,7 @@ sprintf(str,"[INFO]bno on\n");
         }
 
 
-        //昇降指令
+        //段越え機構関連のモーター指令
         if(flag_lift == 2){
             if(ref_lift_front_posi - front_lift_posi > 80){
                 roboclawCmd0 = ms_qpps(1.0,500,0.026,1.0);
@@ -3140,1122 +3119,29 @@ sprintf(str,"[INFO]bno on\n");
             }
         }
 
-        if(back_wheel_flag){//後輪（昇降はボタンの上下左右押しっぱなしで確認）
-            if(overstep_flag || overstep_R1_flag){
-                vel_lift_back = 0.08;//0.03;
-            }else if(downstep_flag){
-                // vel_lift_back = platform.refV_x_cmd;
-                vel_lift_back = 0.02;//こっちは変えない
-                // roboclawCmd2 = platform.refV_x_cmd;
-            }else if(downstep_R1_flag){
-                vel_lift_back = -0.02;
-            }
-        }else{
-            vel_lift_back = 0.0;
-            // roboclawCmd2 = 0.0;
-        }
-
-///////////
-/*
-        //リフトの上昇時間を指定してそれを基準にモータを動かす．----------------
-        height_target_front_pos = 0.2;
-        height_target_center_pos = 0.2;
-        // height_target_back_pos = 0.2;
-        delta_H_front = height_target_front_pos - height_front_pos;//目標との差
-        delta_H_center = height_target_center_pos - height_center_pos;
-        // delta_H_back = height_target_back_pos - height_back_pos;
-
-        vel_lift_front = delta_H_front / time_front_lift;//昇降速度
-        vel_lift_center = delta_H_center / time_center_lift;
-        // vel_lift_back = delta_H_back / time_back_lift;
-
-        // //この下でloboclaw指令値に変換
-        // double refOmega_front, refOmega_center, refOmega_back;
-        // double wheel_front_r = FRONT_R/1000, wheel_center_r = FRONT_R/1000, wheel_back_r = 2.5/1000;//車輪半径
-        // double gearratio_front = 1.0, gearratio_center = 1.0, gearratio_back = 1.0;//ギア比
-        // refOmega_front = vel_lift_front / wheel_front_r * gearratio_front;//速度をωに変換
-        // refOmega_center = vel_lift_center / wheel_center_r * gearratio_center;
-        // refOmega_back = vel_lift_back / wheel_back_r * gearratio_back;
-        // // roboclawCmd0 = refOmega_front * _2RES_PI;//roboclaw qppsに変換する．
-        // // roboclawCmd1 = refOmega_center * _2RES_PI;
-        // roboclawCmd2 = refOmega_back * _2RES_PI;
-
-        //自己位置と段越え時の距離など計算--------------------------
-        //リフト上昇に必要な水平距離
-        dist_front_up = robot_speed_mps * time_front_lift;
-        dist_center_up = robot_speed_mps * time_center_lift;
-        dist_back_up = robot_speed_mps * time_back_lift;
-        //リフトの目標高さ（次に進むマスによって変化する．）
-        double step_height_m = 0.0;
-        double now_height_m = 0.0;
-        if(autonomous.phase == 20 || autonomous.phase == 9){
-            now_height_m = stepHeight[cubeIndex];
-            step_height_m = stepHeight[nextIndex];//段越え高さの設定
-            // height_target_front_pos = step_height_m;
-
-            // if(distance_front < ){
-                if((step_height_m - now_height_m) > 0){//次の段の高さが高い時
-                    // notstep_flag = false;
-                    overstep_flag = true;
-                    downstep_flag = false;
-                    KFS_height_state = 2;
-                }else if((step_height_m - now_height_m) < 0){//次が低い時
-                    // notstep_flag = false;
-                    overstep_flag = false;
-                    downstep_flag = true;
-                    KFS_height_state = 1;
-                }else if((step_height_m - now_height_m) == 0){
-                    // if(autonomous.nextX == 4){
-                    //     notstep_flag = true;
-                    //     overstep_flag = false;
-                    //     downstep_flag = false;
-                    //     KFS_height_state = 0;
-                    // }else{
-                        // notstep_flag = false;
-                        overstep_flag = true;
-                        downstep_flag = false;
-                        KFS_height_state = 1;
-                    // }
-                    // KFS_height_state = 1;
-                }
-
-                autonomous.KFS_height_state = KFS_height_state;
-                // else if((step_height_m - now_height_m) == 0){
-                //     overstep_flag = false;
-                //     downstep_flag = false;
-                // }
-            // }  
-        }
-
-        
-
-        
-        // height_target_front_pos = 
-        
-
-        //段越え機構制御--------------------------------------------------------------------
-        switch (conf_Mode) {
-            case 1://モータ単体動作確認
-             //目標値の計算---------------------------------------
-                if(back_wheel_flag){//後輪（昇降はボタンの上下左右押しっぱなしで確認）
-                    // roboclawCmd2 = 1000;
-                    vel_lift_back = 0.05;
-                }else{
-                    // roboclawCmd2 = 0;
-                    vel_lift_back = 0.0;
-                }
-                // if(back_wheel_flag){//後輪（昇降はボタンの上下左右押しっぱなしで確認）
-                //     roboclawCmd2 = 1000;
-                
-                // }else{
-                //     roboclawCmd2 = 0;
-                // }
-            break;
-            case 2:
-                //上のリミットスイッチまで移動--------------------------
-                //初期化動作------------
-                if(first_front_up_flag){
-                    roboclawCmd0 = 2000;
-                    roboclawCmd1 = 2000;
-                    if(!limit8read){
-                        roboclawCmd0 = 0;
-                    }
-                    if(!limit9read){
-                        roboclawCmd1 = 0;
-                    }
-                    if(!limit8read & !limit9read){//どっちも押されたら次に進む．フラグを立てる．
-                        first_front_up_flag = false;
-                        first_back_up_flag = false;
-                        first_front_down_flag = true;
-                        first_back_down_flag = true;
-                    }
-                }else {
-                    if(first_front_down_flag){
-                        ref_lift_front_posi = -(397 - set_floor_diff);//mm 初期位置，マイナス分浮かせる．
-                    }
-                    if(first_back_down_flag){
-                        ref_lift_back_posi = -(198.80 - set_floor_diff);//mm　初期位置
-                    }
-
-                    //PIDコマンド
-                    first_PID_lift_front_cmd = PID_lift_front_down.getCmd(ref_lift_front_posi, front_lift_posi, (float)50);
-                    first_PID_lift_back_cmd = PID_lift_front_down.getCmd(ref_lift_back_posi, back_lift_posi, (float)50);
-                    // first_PID_lift_front_cmd = PID_lift_front_up.getCmd(ref_lift_front_posi, front_lift_posi, (float)200);
-                    // first_PID_lift_back_cmd = PID_lift_back_up.getCmd(ref_lift_back_posi, back_lift_posi, (float)200);
-
-                    
-                    if(first_PID_lift_front_cmd > 7){
-                        roboclawCmd0 = 2000;
-                    }else if(first_PID_lift_front_cmd < -7){
-                        roboclawCmd0 = -2000;
-                    }else{
-                        roboclawCmd0 = 0;
-                        if(first_front_down_flag){
-
-                            seted_front = true;
-                        }
-                    }
-                    if(first_PID_lift_back_cmd > 8){
-                        roboclawCmd1 = 2000;
-                    }else if(first_PID_lift_back_cmd < -8){
-                        roboclawCmd1 = -2000;
-                    }else {
-                        roboclawCmd1 = 0;
-                        if(first_back_down_flag){
-                            seted_back = true;
-                        }
-                    }
-                    if(seted_front && seted_back && first_front_down_flag && first_back_down_flag){
-                        seted_first = true;//初期化終了
-                        conf_Mode = 5;//モードを変更（シーケンス）
-                    }
-                }
-            break;
-            case 3://シーケンス用，autocontrollのphaseが11の時にこの動作を行う．
-            break;
-            case 4://センサ入れた半自動
-            break;
-            case 5://距離予測自動リフト上げ，autocontrollのphaseが11の時にこの動作を行う．
-                if(overstep_flag){
-                    switch(overstep_phase){
-                        case 0://初期，床にいる状態
-                            ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                            ref_lift_back_posi = -((198.80 - set_floor_diff2));//mm
-                            // if ((overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                                // autonomous.lift_check = false;
-                                overstep_phase = 1;
-                            // }
-                        break;
-                        case 1://前昇降上げる
-                            if(nextIndex == 13){
-                                if(next_box_state == 2){//回収boxだったときは上げる．
-                                    ref_lift_front_posi = -((397) - 200);//mm
-                                    ref_lift_back_posi = -(198.80 - set_floor_diff2);//mm
-                                    if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 && fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                        autonomous.lift_check = true;
-                                        hold_phase = 0;
-                                        overstep_phase = 11;
-                                        // autonomous.phase = 10;
-                                    }else{
-                                        autonomous.lift_check = false;
-                                    }
-                                }else if(next_box_state != 2){//回収以外ならスルー
-                                    ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                                    ref_lift_back_posi = -((198.80 - set_floor_diff2));//mm
-                                    if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 && fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                        autonomous.lift_check = true;
-                                        hold_phase = 0;
-                                        // overstep_phase = 0;
-                                        // autonomous.phase = 121;
-                                    }else{
-                                        autonomous.lift_check = false;
-                                    }
-                                }
-                            }else{
-                                ref_lift_front_posi = -((397) - 200);//mm
-                                ref_lift_back_posi = -(198.80 - set_floor_diff2);//mm
-                                // if ((overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                                if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 && fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                    //昇降が収束したらautonomousを進める
-                                    // autonomous.phase = 10;
-                                    autonomous.lift_check = true;
-                                    if(pre_kouden1read == 1 && kouden1read == 0){//前昇降の光電反応したら
-                                        double z_norm = atan2(sin(gPosi.z), cos(gPosi.z));
-                                        if (fabs(z_norm) < M_PI / 4) {// 前向き（0度付近）上から26.5mm (60 - 26.6 = 33.5mm)-> +33.5mm
-                                            // platform.setPosi(coords {forest_Posi[cubeIndex].front - distance_front, gPosi.y, 0.000});
-                                            // platform.setAxisPosi(forest_Posi[cubeIndex].front - distance_front, POSIX);
-                                        }  else if (fabs(z_norm - M_PI/2) < M_PI / 4) {// 右向き（青の時）（+90度付近）
-                                            // platform.setPosi(coords {gPosi.x, forest_Posi[cubeIndex].right - distance_out, M_PI/2});
-                                            platform.setAxisPosi(forest_Posi[cubeIndex].right - distance_out, POSIY);
-                                        } else if (fabs(z_norm + M_PI/2) < M_PI / 4) {// 左向き（青の時）（-90度付近）
-                                            // platform.setPosi(coords {gPosi.x, forest_Posi[cubeIndex].left + distance_in, -M_PI/2});
-                                            platform.setAxisPosi(forest_Posi[cubeIndex].left + distance_in, POSIY);
-                                        } else { // |z_norm| >= 3π/4// 後ろ向き（±180度付近）
-                                            // platform.setPosi(coords {forest_Posi[cubeIndex].back + distance_back, gPosi.y, M_PI});
-                                            // platform.setAxisPosi(forest_Posi[cubeIndex].back + distance_back, POSIX);
-                                        }
-                                        // nextPhase = PUSH_BUTTON;//ここでphase を111にして停止させる． 
-                                        if(autonomous.phase == 11){
-                                            autonomous.phase = 111;
-                                        }else if(autonomous.phase == 31){
-                                            autonomous.phase = 310;
-                                        }else if(autonomous.phase == 41){
-                                            autonomous.phase = 401;
-                                        }
-                                        // autonomous.phase = 111;
-                                        // ControlMode = MANUAL_MODE;
-                                        if(next_box_state == 2){
-                                            hold_phase = 0;
-                                            overstep_phase = 11;
-                                        }else if(next_box_state == 0){
-                                            hold_phase = 0;
-                                            overstep_phase = 21;
-                                        }
-                                    }
-                                }else{
-                                    autonomous.lift_check = false;
-                                }
-                            }
-                        break;
-                        case 11://取得するとき
-                            autonomous.lift_check = false;
-                            //期待を後ろに下げてから，昇降を下げて回収しなければいけない
-                            //回収する段が高い時→
-                                //最初に取るとき→床から20mm
-                                //外側回収，130mm
-                                //内側回収，20mm
-                            //回収する段が低い時-> 高い時と同じ高さにする
-                                //最初に取るとき→床から
-                                //回収する位置⇒kfsまでの距離で停止位置を決める．0.535
-                            switch (hold_phase) {
-                                case 0:
-                                    autonomous.send_num = 10;//ハンドで取得させる．
-                                    if(autonomous.up_num == 3 || (overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON){//KFSを回収保持したら
-                                    // if ((overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                                        hold_phase = 1;
-                                    }
-                                break;
-                                case 1://ちょっと機体を下げる
-                                    if(nextIndex == 13){//13の時は段差がないので下がらない
-                                        ControlMode = AUTO_MODE;
-                                        autonomous.send_num = 11;
-                                        hold_phase= 2;
-                                    }else{
-                                        ControlMode = MANUAL_MODE;
-                                        autostep_mode = true;
-                                        refV.x = -0.2;
-                                        double dist_back = 0.0;
-                                        if(autonomous.up_box_num < 2){
-                                            dist_back = 0.2;
-                                        }else {
-                                            dist_back = 0.4;
-                                        }
-                                        if(lrtb_dist_0 > 0.3)
-                                            autonomous.send_num = 11;
-                                        if(lrtb_dist_0 > dist_back){
-                                            autonomous.send_num = 11;
-                                            ControlMode = AUTO_MODE;
-                                            autostep_mode = false;
-                                            refV.x = 0.0;
-                                            hold_phase= 2;
-                                        }
-                                    }
-                                break;
-                                case 2://前昇降を動かす（ちょっと下に下げる）．
-                                    if(autonomous.up_box_num < 2){//外側回収，130mm
-                                        ref_lift_front_posi = -((397) - 200 + 130);//mm
-                                        ref_lift_back_posi = -(198.80 - set_floor_diff2);//mm
-                                        if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 && fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                            autonomous.send_num = 12;
-                                            hold_phase = 3;
-                                        }
-                                    }else {//内側回収, 下から20mm
-                                        ref_lift_front_posi = -((397));//mm
-                                        ref_lift_back_posi = -(198.80 - set_floor_diff2);//mm
-                                        if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 && fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                            autonomous.send_num = 12;
-                                            hold_phase = 3;
-                                        }
-                                    }
-                                break;
-                                case 3://ハンド指示待ち
-                                    if(autonomous.up_num == 4 || (overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON){//段越えのために昇降を動かしてOK
-                                    // if ((overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                                        //昇降位置を戻す
-                                        ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                                        ref_lift_back_posi = -(198.80 - set_floor_diff2);//mm
-                                        if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 && fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                            hold_phase = 4;
-                                        }
-                                    }
-                                break;
-                                case 4://昇降戻ったら次に進める．
-                                    // if(nextIndex == 13){
-                                        // for (int i = 0; i < 12; i++) {//test用全部リセット
-                                        //     obj_state_test[i] = 0;
-                                        // }
-                                        
-                                        if(nextIndex >= 3 && nextIndex <= 14){
-                                            obj_state_test[nextIndex-3] = 0;
-                                        }
-                                        
-                                        // autonomous.phase = 10;//ここ多分20にしないと旋回しない
-                                        if(autonomous.phase == 310){
-                                            autonomous.phase = 32;
-                                            hold_phase= 0;
-                                            overstep_phase = 0;
-                                            ControlMode = AUTO_MODE;
-                                        }else if(autonomous.phase == 401){//上らないとき
-                                            autonomous.phase = 42;
-                                            hold_phase= 0;
-                                            overstep_phase = 0;
-                                            ControlMode = AUTO_MODE;
-                                        }else if(autonomous.phase == 111){
-                                            // autonomous.phase = 20;
-                                            hold_phase= 0;
-                                            if(cubePosi.x == -1){
-                                                autonomous.phase = 20;
-                                                overstep_phase = 0;
-                                            }else{
-                                                autonomous.phase = 20;
-                                                overstep_phase = 0;
-                                            }
-                                            overstep_phase = 0;
-                                            ControlMode = AUTO_MODE;
-                                        }
-
-                                    // }else{
-                                    //     autostep_mode = true;
-                                    //     refV.x = 0.2;
-                                    //     if(pre_kouden1read == 0 && kouden1read == 1){//反応したら止める
-                                    //         autostep_mode = false;
-                                    //         refV.x = 0.0;
-                                    //         hold_phase= 0;
-                                    //         overstep_phase = 2;
-                                    //     }
-                                    // }
-                                break;
-                            }
-                        break;
-                        case 21:
-                            if(nextIndex >= 3 && nextIndex <= 14){
-                                obj_state_test[nextIndex-3] = 0;
-                            }
-                            ref_lift_front_posi = -((397) - 200);//mm
-                            ref_lift_back_posi = -(198.80);//下げる前に1回だけ地面の高さにもっていき，高さをそろえる．
-                            if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 &&
-                                fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                overstep_phase = 2;
-                            }
-                        break;
-                        case 2://前昇降下げる，後昇降下げる．接地エンコーダ上げる．
-                            air_up_flag = true;
-                            ref_lift_front_posi = -((397+30));//mm
-                            ref_lift_back_posi = -((198.80) + 200 + 20);//mm 下げる分だけプラスする
-                            // PID_lift_front_cmd = PID_lift_front_up.getCmd(ref_lift_front_posi, front_lift_posi, (float)50);
-                            // PID_lift_back_cmd = PID_lift_back_up.getCmd(ref_lift_back_posi, back_lift_posi, (float)50);
-                            // if ((overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                            //     overstep_phase = 12;
-                            // }
-                            if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 &&
-                                fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                //  conv_cnt1++;
-                            // if(front_syusoku && back_syusoku) {
-                                overstep_phase = 12;
-                            }
-                            //  else {
-                            //     conv_cnt1 = 0;
-                            // }
-                            // if (conv_cnt1 > 20) {
-                            //     downstep_phase = 12;
-                            //     conv_cnt1 = 0;
-                            // }
-                        break; 
-                        case 12://後輪だけ動かす
-                            // if(nextIndex >= 3 && nextIndex <= 14){//取得したらそこは0にする．
-                            //     obj_state_test[nextIndex-3] = 0;
-                            // }
-                            back_wheel_flag = true;
-                            // autostep_mode = true;
-                            // refV.x = 0.1;
-                            // if ((overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                            if(pre_kouden3read == 1 && kouden3read == 0){//後ろの内側光電を読んだら止める．
-                                back_wheel_flag = false;//後輪止める
-                                overstep_phase = 3;
-                            }
-                        break;
-                        case 3://後昇降上げる→床にいる状態に戻る．
-                            ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                            ref_lift_back_posi = -((198.80 - set_floor_diff2));//mm
-                            // if ((overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                            if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 && fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {//昇降上げ切ったら
-                                double z_norm = atan2(sin(gPosi.z), cos(gPosi.z));
-                                if (fabs(z_norm) < M_PI / 4) {// 前向き（0度付近）上から26.5mm (60 - 29 = 31mm)-> +31mm
-                                    // platform.setPosi(coords {forest_Posi[nextIndex].back + 0.31, gPosi.y, gPosi.z});
-                                    // platform.setAxisPosi(forest_Posi[nextIndex].back + 0.31, POSIX);
-                                }  else if (fabs(z_norm - M_PI/2) < M_PI / 4) {// 右向き（青の時）（+90度付近）
-                                    // platform.setPosi(coords {gPosi.x, forest_Posi[nextIndex].left + 0.31, gPosi.z});
-                                    platform.setAxisPosi(forest_Posi[nextIndex].left + 0.31, POSIY);
-                                } else if (fabs(z_norm + M_PI/2) < M_PI / 4) {// 左向き（青の時）（-90度付近）
-                                    // platform.setPosi(coords {gPosi.x, forest_Posi[nextIndex].right - 0.31, gPosi.z});
-                                    platform.setAxisPosi(forest_Posi[nextIndex].right - 0.31, POSIY);
-                                } else { // |z_norm| >= 3π/4// 後ろ向き（±180度付近）
-                                    // platform.setPosi(coords {forest_Posi[nextIndex].front - 0.31, gPosi.y, gPosi.z});
-                                    // platform.setAxisPosi(forest_Posi[nextIndex].front - 0.31, POSIX);
-                                }
-                                autonomous.phase = 121;//121;//20;//autophase を11に戻す．ここで自己位置が収束するまで動かす．（自己位置はLRTBで補正か，上り終わった時に値を信じて更新する．）
-                                overstep_phase = 0;//戻る
-                                ControlMode = AUTO_MODE;//経路追従制御に戻す
-                                overstep_flag = false;
-                                air_up_flag = false;
-                            } 
-                            // }
-                        break; 
-                    }
-                }
-                // else{
-                //     air_up_flag = false;
-                //     ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                //     ref_lift_back_posi = -((198.80 - set_floor_diff2));//mm
-                // }
-                
-                if(downstep_flag){
-                    switch(downstep_phase){
-                        case 0://初期，床にいる状態
-                            air_up_flag = false;
-                            ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                            ref_lift_back_posi = -((198.80 - set_floor_diff2 + 20));//mm/ 
-                            if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 && fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                autonomous.lift_check = true;
-                            }else{
-                                autonomous.lift_check = false;
-                            }
-                            if(pre_kouden1read == 0 && kouden1read == 1){//前昇降の光電反応しなくなったら
-                                double z_norm = atan2(sin(gPosi.z), cos(gPosi.z));
-                                if (fabs(z_norm) < M_PI / 4) {// 前向き（0度付近）上から26.5mm (60 - 26.6 = 33.5mm)-> +33.5mm
-                                    // platform.setPosi(coords {forestPosition[cubeIndex].x + 0.335, gPosi.y, gPosi.z});
-                                    platform.setAxisPosi(forestPosition[cubeIndex].x + 0.335, POSIX);
-                                } else if (fabs(z_norm - M_PI/2) < M_PI / 4) {// 右向き（青の時）（+90度付近）
-                                    // platform.setPosi(coords {gPosi.x, forestPosition[cubeIndex].y + 0.335, gPosi.z});
-                                    platform.setAxisPosi(forestPosition[cubeIndex].y + 0.335, POSIY);
-                                } else if (fabs(z_norm + M_PI/2) < M_PI / 4) {// 左向き（青の時）（-90度付近）
-                                    // platform.setPosi(coords {gPosi.x, forestPosition[cubeIndex].y - 0.335, gPosi.z});
-                                    platform.setAxisPosi(forestPosition[cubeIndex].y - 0.335, POSIY);
-                                } else { // |z_norm| >= 3π/4// 後ろ向き（±180度付近）
-                                    // platform.setPosi(coords {forestPosition[cubeIndex].x - 0.335, gPosi.y, gPosi.z});
-                                    platform.setAxisPosi(forestPosition[cubeIndex].x - 0.335, POSIX);
-                                }
-                                // nextPhase = PUSH_BUTTON;//ここでphase を111にして停止させる．
-                                autonomous.phase = 111;
-                                // ControlMode = MANUAL_MODE;
-                                
-                                if(next_box_state == 2){//2のボックスがあるとき
-                                    hold_phase = 0;
-                                    downstep_phase = 100;
-                                }else if(next_box_state == 0){
-                                    hold_phase = 0;
-                                    downstep_phase = 1;
-                                }
-                            }
-                        break;
-                        case 100://取得
-                            switch (hold_phase) {
-                                case 0://lrtbで取得範囲まで移動-> ある程度はautoconで移動するときに合わせたい
-                                    autonomous.send_num = 10;//位置があったら下げる．
-                                    ControlMode = MANUAL_MODE;
-                                    autostep_mode = true;
-                                    if(lrtb_dist_0 > 0.535 + 0.020){
-                                        lrtb_check = false;
-                                        refV.x = 0.1;
-                                    }else if(lrtb_dist_0 < 0.535 - 0.020){
-                                        lrtb_check = false;
-                                        refV.x = -0.1;
-                                    }else{
-                                        // ControlMode = AUTO_MODE;
-                                        // autostep_mode = false;
-                                        lrtb_check = true;
-                                        refV.x = 0.0;
-                                    }
-                                    // if((autonomous.phase == 10 || autonomous.phase == 11)){
-                                    // if(autonomous.up_num == 3){//kfsを保持したら
-                                    if (autonomous.up_num == 3 || (downstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                                        autonomous.send_num = 11;//上げてもらう
-                                        hold_phase = 2;
-                                        lrtb_check = false;
-                                    }  
-                                break;
-                                case 2://格納のために昇降を上げる
-                                    refV.x = 0.0;
-                                    if(autonomous.up_box_num < 2){//外側回収，130mm
-                                        ref_lift_front_posi = -((397) - 200 + 130);//mm
-                                        ref_lift_back_posi = -(198.80 - set_floor_diff2);//mm
-                                        if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 && fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                            autonomous.send_num = 12;
-                                            hold_phase = 3;
-                                        }
-                                    }else {//内側回収, 下から20mm
-                                        ref_lift_front_posi = -((397) - 20);//mm
-                                        ref_lift_back_posi = -(198.80 - set_floor_diff2);//mm
-                                        if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 && fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                            autonomous.send_num = 12;
-                                            hold_phase = 3;
-                                        }
-                                    }
-                                break;
-                                case 3://ハンドの指示待ち，格納待ち
-                                    // if(autonomous.up_num == 4){//段越えのために昇降を動かしてOK
-                                    if (autonomous.up_num == 4 || (downstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                                        //昇降位置を戻す
-                                        ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                                        ref_lift_back_posi = -((198.80 - set_floor_diff2 + 20));//mm
-                                        if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 && fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                            hold_phase = 4;
-                                        }
-                                    }
-                                break;
-                                case 4://昇降戻ったら前に進める．
-                                    // for (int i = 0; i < 12; i++) {//test用全部リセット
-                                    //     obj_state_test[i] = 0;
-                                    // }
-                                    if(nextIndex >= 3 && nextIndex <= 14){
-                                            obj_state_test[nextIndex-3] = 0;
-                                    }
-                                    if(kouden1read == 0){//段に近い時→進まないといけない
-                                        ControlMode = MANUAL_MODE;
-                                        autostep_mode = true;
-                                        refV.x = 0.2;
-                                    }else if(kouden1read == 1){
-                                        ControlMode = AUTO_MODE;
-                                        autostep_mode = false;
-                                        refV.x = 0.0;
-                                        hold_phase= 0;
-                                        // overstep_phase = 2;
-                                        downstep_phase = 1;
-                                    }
-                                   
-                                    if(pre_kouden1read == 0 && kouden1read == 1){//反応したら止める
-                                        ControlMode = AUTO_MODE;
-                                        autostep_mode = false;
-                                        refV.x = 0.0;
-                                        hold_phase= 0;
-                                        // overstep_phase = 2;
-                                        downstep_phase = 1;
-                                    }
-                                break;
-                            }
-                        break;
-                        case 1://前昇降下げる，接地エンコーダ上げる，後昇降ちょっと下げる
-                            air_up_flag = true;
-                            ref_lift_front_posi = -((397) + 200 - 20);//mm
-                            ref_lift_back_posi = -(198.80 - 10  + 30);//mm
-                            // if ((downstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                            //     downstep_phase = 11;
-                            // }
-                            if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 &&
-                                fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                downstep_phase = 11;
-                            }
-                            // if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 &&
-                            //     fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                            //     conv_cnt1++;
-                            // } else {
-                            //     conv_cnt1 = 0;
-                            // }
-                            // if (conv_cnt1 > 20) {
-                            //     downstep_phase = 11;
-                            //     conv_cnt1 = 0;
-                            // }
-                        break;
-                        case 11://後輪と足回り動かす．
-                            back_wheel_flag = true;
-                            ControlMode = MANUAL_MODE;
-                            autostep_mode = true;
-                            refV.x = 0.3;
-                            // if ((downstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                            if(pre_kouden2read == 0 && kouden2read == 1){//後ろの光電を読まなくなったら止める．
-                                back_wheel_flag = false;
-                                ControlMode = AUTO_MODE;
-                                autostep_mode = false;
-                                refV.x = 0.0;
-                                downstep_phase = 12;
-                            }
-                        break;
-                        case 12:
-                            // if ((downstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                                downstep_phase = 2;
-                            // }
-                        break;
-                        case 2://前昇降上げる，後昇降上げる，接地エンコーダ下げる
-                            // air_up_flag = false;
-                            ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                            ref_lift_back_posi = -((198.80) - 10 - 188.8 );//mm 下げる分だけプラスする
-                            //後ろのLRTBが一定の値以上あったらLRTB
-                            // if ((downstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                            //     downstep_phase = 3;
-                            // }
-                            if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 &&
-                                fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                //  conv_cnt1++;
-                            // if(front_syusoku && back_syusoku) {
-                                air_up_flag = false;
-                                downstep_phase = 13;
-                            }
-                            
-                            // if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 &&
-                            //     fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                            //     conv_cnt1++;
-                            // } else {
-                            //     conv_cnt1 = 0;
-                            // }
-                            // if (conv_cnt1 > 20) {
-                            //     downstep_phase = 3;
-                            //     conv_cnt1 = 0;
-                            // }
-                        break; 
-                        case 13:
-                            ControlMode = MANUAL_MODE;
-                            autostep_mode = true;
-                            refV.x = 0.2;
-                            if(lrtb_dist_3 > 0.2){
-                                ControlMode = AUTO_MODE;
-                                autostep_mode = false;
-                                refV.x = 0.0;
-                                downstep_phase = 3;
-                            }
-                        break;
-                        case 3://後昇降下げる→床にいる状態に戻る
-                            // air_state = false;
-                            ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                            ref_lift_back_posi = -((198.80 - set_floor_diff2));//mm
-                            // if ((overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                                // autonomous.phase = 12;
-                            if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 && fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {//昇降上げ切ったら
-                                double z_norm = atan2(sin(gPosi.z), cos(gPosi.z));
-                                if (fabs(z_norm) < M_PI / 4) {// 前向き（0度付近）上から26.5mm (60 - 26.6 = 33.5mm)-> +33.5mm
-                                    // platform.setPosi(coords {forest_Posi[cubeIndex].front + distance_back, gPosi.y, gPosi.z});
-                                    // platform.setAxisPosi(forest_Posi[cubeIndex].front + distance_back, POSIX);
-                                } else if (fabs(z_norm - M_PI/2) < M_PI / 4) {// 右向き（青の時）（+90度付近）
-                                    // platform.setPosi(coords {gPosi.x, forest_Posi[cubeIndex].right + distance_in, gPosi.z});
-                                    platform.setAxisPosi(forest_Posi[cubeIndex].right + distance_in, POSIY);
-                                } else if (fabs(z_norm + M_PI/2) < M_PI / 4) {// 左向き（青の時）（-90度付近）
-                                    // platform.setPosi(coords {gPosi.x, forest_Posi[cubeIndex].left - distance_out, gPosi.z});
-                                    platform.setAxisPosi(forest_Posi[cubeIndex].left - distance_out, POSIY);
-                                } else { // |z_norm| >= 3π/4// 後ろ向き（±180度付近）
-                                    // platform.setPosi(coords {forest_Posi[cubeIndex].front - distance_front, gPosi.y, gPosi.z});
-                                    // platform.setAxisPosi(forest_Posi[cubeIndex].front - distance_front, POSIX);
-                                }
-                                autonomous.phase = 121;//121;//autophase を11に戻す．ここで自己位置が収束するまで動かす．（自己位置はLRTBで補正か，上り終わった時に値を信じて更新する．）
-                                downstep_phase = 0;//戻る
-                                ControlMode = AUTO_MODE;//経路追従制御に戻す
-                                downstep_flag = false;
-                            }
-                                // downstep_phase = 0;//戻る
-                            // }
-                        break; 
-                    }
-                }
-                // else{
-                //     air_up_flag = false;
-                //     ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                //     ref_lift_back_posi = -((198.80 - set_floor_diff2));//mm
-                // }
-                //段差が終了したとき．→forestから出たとき
-                if(notstep_flag){
-                    air_up_flag = false;
-                    ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                    ref_lift_back_posi = -((198.80 - set_floor_diff2 + 20));//mm/ 
-                    autonomous.phase = 11;
-                    notstep_flag = false;
-                }
-
-                //R1との合体時（段越え）---------------------------------
-                if(overstep_R1_flag){
-                    switch(overstep_R1_phase){
-                        case 0://初期，床にいる状態
-                            ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                            ref_lift_back_posi = -((198.80 - set_floor_diff2));//mm
-                            if ((overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                                // autonomous.lift_check = false;
-                                overstep_R1_phase = 1;
-                            }
-                        break;
-                        case 1://前昇降上げる
-                            ref_lift_front_posi = -((397) - 397);//mm上限まで
-                            ref_lift_back_posi = -(198.80 - 30);//mm
-                            if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 && fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                autonomous.lift_check = true;
-                                // hold_phase = 0;
-                                overstep_R1_phase = 11;
-                                // autonomous.phase = 10;
-                            }
-                        break;
-                        case 11://取得するとき
-                            //取得はなし
-                            if(pre_kouden1read == 1 && kouden1read == 0){//前昇降の光電反応したら
-                                overstep_R1_phase = 2;
-                            }
-                        break;
-                        case 21:
-                            ref_lift_front_posi = -((397) );//mm
-                            ref_lift_back_posi = -(198.80);//下げる前に1回だけ地面の高さにもっていき，高さをそろえる．
-                            if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 &&
-                                fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                overstep_R1_phase = 2;
-                            }
-                        break;
-                        case 2://前昇降下げる，後昇降下げる．接地エンコーダ上げる．
-                            air_up_flag = true;
-                            ref_lift_front_posi = -((397+20));//mm
-                            ref_lift_back_posi = -(575);//mm 下げる分だけプラスする 下限575
-                            // PID_lift_front_cmd = PID_lift_front_up.getCmd(ref_lift_front_posi, front_lift_posi, (float)50);
-                            // PID_lift_back_cmd = PID_lift_back_up.getCmd(ref_lift_back_posi, back_lift_posi, (float)50);
-                            // if ((overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                            //     overstep_R1_phase = 12;
-                            // }
-                            if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 &&
-                                fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                //  conv_cnt1++;
-                            // if(front_syusoku && back_syusoku) {
-                                overstep_R1_phase = 12;
-                            }
-                            //  else {
-                            //     conv_cnt1 = 0;
-                            // }
-                            // if (conv_cnt1 > 20) {
-                            //     overstep_R1_phase = 12;
-                            //     conv_cnt1 = 0;
-                            // }
-                        break; 
-                        case 12://後輪だけ動かす
-                            back_wheel_flag = true;
-                            ref_lift_front_posi = -((397) - 397);//mm上限まで
-                            // ref_lift_back_posi = -(198.80 - 30);//mm
-                            // autostep_mode = true;
-                            // refV.x = 0.1;
-                            // if ((overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                            if(pre_kouden3read == 1 && kouden3read == 0){//後ろの内側光電を読んだら止める．
-                                back_wheel_flag = false;//後輪止める
-                                overstep_R1_phase = 3;
-                            }
-                        break;
-                        case 3://後昇降上げる→床にいる状態に戻る．
-                            // ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                            ref_lift_front_posi = -((397) - 397);
-                            ref_lift_back_posi = -((198.80 - set_floor_diff2));//mm
-                            // if ((overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                            
-                                // autonomous.phase = 121;//121;//20;//autophase を11に戻す．ここで自己位置が収束するまで動かす．（自己位置はLRTBで補正か，上り終わった時に値を信じて更新する．）
-                                overstep_R1_phase = 0;//戻る
-                                // ControlMode = AUTO_MODE;//経路追従制御に戻す
-                                overstep_R1_flag = false;
-                                air_up_flag = false;
-                          
-                            // }
-                        break; 
-                    }
-                }
-
-                //R1段降り-----------------------------------
-                if(downstep_R1_flag){
-                    switch(downstep_R1_phase){
-                        case 0://初期，床にいる状態
-                            air_up_flag = false;
-                            ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                            ref_lift_back_posi = -((198.80 - set_floor_diff2));//mm/ 
-                            if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 && fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                autonomous.lift_check = true;
-                            }else{
-                                autonomous.lift_check = false;
-                            }
-                            if(pre_kouden2read == 0 && kouden2read == 1){//後ろ昇降の光電反応しなくなったら
-                               
-                                // nextPhase = PUSH_BUTTON;//ここでphase を111にして停止させる．
-                                // autonomous.phase = 111;
-                                // ControlMode = MANUAL_MODE;
-                                    // hold_phase = 0;
-                                    downstep_R1_phase = 1;
-                            }
-                        break;
-                        case 100://取得
-                            //取得はなし
-                        break;
-                        case 1://後ろ降下げる，
-                            // air_up_flag = true;
-                            ref_lift_front_posi = -(397 + 20);//mm
-                            ref_lift_back_posi = -(575);//mm
-                            // if ((downstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                            //     downstep_R1_phase = 11;
-                            // }
-                            if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 &&
-                                fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                downstep_R1_phase = 11;
-                            }
-                            // if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 &&
-                            //     fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                            //     conv_cnt1++;
-                            // } else {
-                            //     conv_cnt1 = 0;
-                            // }
-                            // if (conv_cnt1 > 20) {
-                            //     downstep_R1_phase = 11;
-                            //     conv_cnt1 = 0;
-                            // }
-                        break;
-                        case 11://後輪と足回り動かす．エア上げる．
-                            air_up_flag = true;
-                            back_wheel_flag = true;
-                            // ControlMode = MANUAL_MODE;
-                            // autostep_mode = true;
-                            // refV.x = -0.3;
-                            if (((downstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) || (pre_kouden1read == 0 && kouden1read == 1)) {
-                            // if(pre_kouden1read == 0 && kouden1read == 1){//前の光電を読まなくなったら止める．
-                                back_wheel_flag = false;
-                                // ControlMode = AUTO_MODE;
-                                // autostep_mode = false;
-                                // refV.x = 0.0;
-                                downstep_R1_phase = 12;
-                            }
-                        break;
-                        case 12:
-                            // if ((downstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                                downstep_R1_phase = 2;
-                            // }
-                        break;
-                        case 2://前昇降上げる，後昇降上げる
-                            // air_up_flag = false;
-                            ref_lift_front_posi = -((397 - 397));//mm
-                            ref_lift_back_posi = -((198.80));//mm 下げる分だけプラスする
-                            //後ろのLRTBが一定の値以上あったらLRTB
-                            // if ((downstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                            //     downstep_R1_phase = 3;
-                            // }
-                            if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 &&
-                                fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                                //  conv_cnt1++;
-                            // if(front_syusoku && back_syusoku) {
-                                air_up_flag = false;
-                                downstep_R1_phase = 13;
-                            }
-                            
-                            // if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 &&
-                            //     fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                            //     conv_cnt1++;
-                            // } else {
-                            //     conv_cnt1 = 0;
-                            // }
-                            // if (conv_cnt1 > 20) {
-                            //     downstep_R1_phase = 3;
-                            //     conv_cnt1 = 0;
-                            // }
-                        break; 
-                        case 13:
-                            // ControlMode = MANUAL_MODE;
-                            // autostep_mode = true;
-                            // refV.x = 0.2;
-                            if(lrtb_dist_0 > 0.2){
-                                // ControlMode = AUTO_MODE;
-                                // autostep_mode = false;
-                                // refV.x = 0.0;
-                                downstep_R1_phase = 3;
-                            }
-                        break;
-                        case 3://後昇降下げる→床にいる状態に戻る
-                            // air_state = false;
-                            ref_lift_front_posi = -((397 - set_floor_diff));//mm
-                            ref_lift_back_posi = -((198.80 - set_floor_diff2));//mm
-                            // if ((overstep_nextPhase & OVERSTEP_PUSH_BUTTON) == OVERSTEP_PUSH_BUTTON) {
-                                // autonomous.phase = 12;
-                           
-                                // autonomous.phase = 121;//121;//autophase を11に戻す．ここで自己位置が収束するまで動かす．（自己位置はLRTBで補正か，上り終わった時に値を信じて更新する．）
-                                downstep_R1_phase = 0;//戻る
-                                // ControlMode = AUTO_MODE;//経路追従制御に戻す
-                                downstep_R1_flag = false;
-                                // downstep_R1_phase = 0;//戻る
-                            // }
-                        break; 
-                    }
-                }
-
-                //ゾーン3KFS設置-----------------------------------------
-                if(autonomous.phase == 63 || autonomous.phase == 64){
-                    // ref_lift_front_posi = -((397) - 397) - 210;//mm上限まで
-                    ref_lift_front_posi = -((397) - 397);
-                    ref_lift_back_posi = -(198.80 - set_floor_diff2);//mm
-                    if (fabs(ref_lift_front_posi - front_lift_posi) < 5.0 &&
-                    fabs(ref_lift_back_posi  - back_lift_posi ) < 5.0) {
-                        autonomous.set_KFS_height = true;
-                    }
-                }
-
-                if(autonomous.phase == 60 || autonomous.phase == 61){
-                    ref_lift_front_posi = -(397 - set_floor_diff - 40);
-                }
-
-                //PIDコマンド-----------------------------
-                // PID_lift_front_cmd = PID_lift_front_up.getCmd(ref_lift_front_posi, front_lift_posi, (float)50);
-                // PID_lift_back_cmd = PID_lift_back_up.getCmd(ref_lift_back_posi, back_lift_posi, (float)50);
-                // //コマンドによる指令--------------
-                // //前昇降---------------------
-                // if(PID_lift_front_cmd > 4){//上げる
-                //     // roboclawCmd0 = 1500;
-                //     roboclawCmd0 = PID_lift_front_cmd * 100;
-                //     if(PID_lift_front_cmd > 30){
-                //         roboclawCmd0 = 4000;
-                //     }
-                //     if(!limit8read){
-                //         roboclawCmd0 = 0;
-                //     }
-                //     front_syusoku = false;
-                // }else if(PID_lift_front_cmd < -4){//下げる
-                //     // roboclawCmd0 = -1500;
-                //     roboclawCmd0 = PID_lift_front_cmd * 100;
-                //     if(PID_lift_front_cmd < -30){
-                //         roboclawCmd0 = -4000;
-                //     }
-                //     front_syusoku = false;
-                // }else{
-                //     roboclawCmd0 = 0;
-                //     front_syusoku = true;
-                //     // overstep_nextPhase = PUSH_BUTTON;
-                // }
-
-                // front_syusoku = false;//130
-                if(ref_lift_front_posi - front_lift_posi > 80){
-                    roboclawCmd0 = ms_qpps(1.0,500,0.026,1.0);
-                    front_syusoku = false;
-                }else if(ref_lift_front_posi - front_lift_posi < -80){
-                    roboclawCmd0 = ms_qpps(-1.0,500,0.026,1.0);
-                    front_syusoku = false;
-                }else if(abs(ref_lift_front_posi - front_lift_posi) < 5){
-                    roboclawCmd0 = 0;
-                    front_syusoku = true;
-                }else{
-                    front_syusoku = false;
-                    double vel = PID_lift_front_up.getCmd(ref_lift_front_posi, front_lift_posi, 0.6);
-                    roboclawCmd0 = ms_qpps(vel,500,0.026,1.0);
-                }
-                if(roboclawCmd0 > 0){
-                    if(!limit8read){
-                        roboclawCmd0 = 0;
-                    }
-                }
-
-                // if(seted_first)  
-                //     roboclawCmd0 = roboclawCmd0 * 1.5;
-
-                //後ろ昇降------------------------
-                // if(PID_lift_back_cmd > 4){
-                //     // roboclawCmd1 = 1500;
-                //     roboclawCmd1 = PID_lift_back_cmd * 100;
-                //     if(PID_lift_back_cmd > 30){
-                //         roboclawCmd1 = 4000;//4000
-                //     }
-                //     if(!limit9read){
-                //         roboclawCmd1 = 0;
-                //     }
-                //     back_syusoku = false;
-                // }else if(PID_lift_back_cmd < -4){
-                //     // roboclawCmd1 = -1500;
-                //     roboclawCmd1 = PID_lift_back_cmd * 100;
-                //     if(PID_lift_back_cmd < -30){
-                //         roboclawCmd1 = -4000;
-                //     }
-                //     back_syusoku = false;
-                // }else {
-                //     roboclawCmd1 = 0;
-                //     back_syusoku = true;
-                //     // overstep_nextPhase = PUSH_BUTTON;
-                // }
-
-                // back_syusoku = false;
-                if(ref_lift_back_posi - back_lift_posi > 80){
-                    roboclawCmd1 = ms_qpps(1.0,500,0.026,1.0);
-                    back_syusoku = false;
-                }else if(ref_lift_back_posi - back_lift_posi < -80){
-                    roboclawCmd1 = ms_qpps(-1.0,500,0.026,1.0);
-                    back_syusoku = false;
-                }else if(abs(ref_lift_back_posi - back_lift_posi) < 5){
-                    roboclawCmd1 = 0;
-                    front_syusoku = true;
-                }else{
-                    back_syusoku = false;
-                    double vel = PID_lift_back_up.getCmd(ref_lift_back_posi, back_lift_posi, 0.6);
-                    roboclawCmd1 = ms_qpps(vel,500,0.026,1.0);
-                }
-                if(roboclawCmd1 > 0){
-                    if(!limit9read){
-                        roboclawCmd1 = 0;
-                    }
-                }
-                // if(seted_first) 
-                //     roboclawCmd1 = roboclawCmd1 * 1.5;
-
-                if(autonomous.phase == 63 || autonomous.phase == 64 || autonomous.phase == 61 || autonomous.phase == 62 || autonomous.phase == 611 || autonomous.phase == 640)
-                    roboclawCmd1 = 0;
-
-                if(front_syusoku && back_syusoku){
-                    lift_syusoku = true;
-                }else{
-                    lift_syusoku = false;
-                }
-
-                //後輪への指令（前に進むだけ）---------------------
-                if(back_wheel_flag){//後輪（昇降はボタンの上下左右押しっぱなしで確認）
-                    if(overstep_flag || overstep_R1_flag){
-                        vel_lift_back = 0.08;//0.03;
-                    }else if(downstep_flag){
-                        // vel_lift_back = platform.refV_x_cmd;
-                        vel_lift_back = 0.02;//こっちは変えない
-                        // roboclawCmd2 = platform.refV_x_cmd;
-                    }else if(downstep_R1_flag){
-                        vel_lift_back = -0.02;
-                    }
-                }else{
-                    vel_lift_back = 0.0;
-                    // roboclawCmd2 = 0.0;
-                }
-            break;
-        }
-        ///
-        */
-        
-
-        //この下で昇降と後輪の速度値をloboclaw指令値に変換する-----------------------
-        double refOmega_front, refOmega_center, refOmega_back;
-        double wheel_front_r = FRONT_R/1000, wheel_center_r = FRONT_R/1000, wheel_back_r = 2.5/1000;//車輪半径
-        double gearratio_front = 1.0, gearratio_center = 1.0, gearratio_back = 1.0;//ギア比roboclawCmd2
-        refOmega_front = vel_lift_front / wheel_front_r * gearratio_front;//速度をωに変換
-        refOmega_center = vel_lift_center / wheel_center_r * gearratio_center;
-        refOmega_back = vel_lift_back / wheel_back_r * gearratio_back;
-        // roboclawCmd0 = refOmega_front * _2RES_PI;//roboclaw qppsに変換する．
-        // roboclawCmd1 = refOmega_center * _2RES_PI;
-        roboclawCmd2 = refOmega_back * _2RES_PI;
-       
-        //モータ指令（最終的な指令場所）--------------------------------------------------------------------
-        // roboclaw1.SpeedM1(roboclawCmd0);//qpps 昇降前
-        // roboclaw1.ForwardM1(roboclawCmd0);
-        // roboclaw1.BackwardM1(roboclawCmd0);
-        // if(roboclawCmd0 > 0){
-        //     roboclaw1.ForwardM1(20);
-        // }else if(roboclawCmd0 < 0){
-        //     roboclaw1.BackwardM1(10);
-        // }else {
-        //     roboclaw1.SpeedM1(0);
-        // }
-
-        // if(roboclawCmd1 > 0){
-        //     roboclaw2.ForwardM1(10);
-        // }else if(roboclawCmd1 < 0){
-        //     roboclaw2.BackwardM1(10);
-        // }else {
-        //     roboclaw2.SpeedM1(0);
-        // }
-        // roboclaw1.SpeedM2(roboclawCmd1);//qpps　昇降後ろ
-        // roboclaw1.ForwardM2(roboclawCmd1);
-        // roboclaw1.BackwardM2(roboclawCmd1);
-        // roboclaw2.SpeedM2(roboclawCmd2);//qpps　後輪
-        // roboclaw2.ForwardM1(roboclawCmd2);
-        // roboclaw2.BackwardM1(roboclawCmd2);
-        // if(corePID_cmd < -corePID_cmd_limit){
-        //     roboclaw.ForwardM2(abs(roboclawCmd0));//後ろ方向
-        // }else if(corePID_cmd > corePID_cmd_limit){
-        //     roboclaw.BackwardM2(abs(roboclawCmd0));//前方向
+        // if(back_wheel_flag){//後輪（昇降はボタンの上下左右押しっぱなしで確認）
+        //     // if(overstep_flag || overstep_R1_flag){
+        //     //     vel_lift_back = 0.08;//0.03;
+        //     // }else if(downstep_flag){
+        //     //     // vel_lift_back = platform.refV_x_cmd;
+        //     //     vel_lift_back = 0.02;//こっちは変えない
+        //     //     // roboclawCmd2 = platform.refV_x_cmd;
+        //     // }else if(downstep_R1_flag){
+        //     //     vel_lift_back = -0.02;
+        //     // }
+        //     if(stepup_flag){
+        //         vel_lift_back = 0.08;//0.03;
+        //     }else if(downstep_flag){
+        //         vel_lift_back = 0.03;
+        //     }else {
+        //         vel_lift_back = 0.00;
+        //     }
         // }else{
-        //     roboclaw.SpeedM2(0);
+        //     vel_lift_back = 0.0;
+        //     // roboclawCmd2 = 0.0;
         // }
 
-        // if(!limit8read && con.readButton_bin(UP)){
-        //     roboclawCmd0 = 0;
-        // }
-        // if(!limit9read && con.readButton_bin(LEFT)){
-        //     roboclawCmd1 = 0;
-        // }
-        // if(!limit8read){
-        //     roboclawCmd0 = 0;
-        // }
-        // if(!limit9read){
-        //     roboclawCmd1 = 0;
-        // }
+        roboclawCmd2 = ms_qpps(vel_lift_back,500,0.025,1.0);
 
         if(flag_stop){
             roboclawCmd0 = 0;
@@ -4279,11 +3165,11 @@ sprintf(str,"[INFO]bno on\n");
 
 
         //エアの指令-----------------
-        if(air_up_flag){
-            air_state = true;
-        }else {
-            air_state = false;
-        }
+        // if(air_up_flag){
+        //     air_state = true;
+        // }else {
+        //     air_state = false;
+        // }
 
         //リミットスイッチ前の値格納
         // pre_limit1read = limit1read;
@@ -4399,8 +3285,84 @@ sprintf(str,"[INFO]bno on\n");
                     e[SDcount] = interval_time;
 
                     f[SDcount] = flag_receive;
-                    g[SDcount] = receive_collect_ball[0];
+                    // g[SDcount] = receive_collect_ball[0];
                 }else{
+
+                    // %lf,%lf,%lf,%lf,%lf,%lf,%lf,%d,%d,%lf,%lf,%lf,%lf,%lf,%lf,%d,%d,%lf,%lf,%lf,%d,%d,%d,%d,%d,%d,
+                    // A[SDcount] = gPosi.y;
+                    // B[SDcount] = gPosi.x;
+                    // C[SDcount] = gPosi.z;
+                    // D[SDcount] = refV.y;
+                    // E[SDcount] = refV.x;
+                    // F[SDcount] = refV.z;
+                    // G[SDcount] = pre_angle;
+                    // a[SDcount] = autonomous.phase;
+                    // b[SDcount] = autonomous.getPathNum();
+                    // H1[SDcount] = autonomous.get_t_be();
+                    // I[SDcount] = autonomous.onx();
+                    // J[SDcount] = autonomous.ony();
+                    // K[SDcount] = autonomous.angle();
+                    // L4[SDcount] = autonomous.Px(3);
+                    // M[SDcount] = autonomous.Py(3);
+                    // //   M[SDcount] = autonomous.lim_refVz();
+                    // //   c[SDcount] = autonomous.acc_process();
+                    // c[SDcount] = autonomous.syusoku;
+                    // // e[SDcount] = interval_time;
+                    // d[SDcount] = timer.read_ms();
+
+                    // N[SDcount] = lrtbPosi.y;
+                    // O[SDcount] = lrtbPosi.x;
+                    // P[SDcount] = lrtbPosi.z;
+                    
+                    // e[SDcount] = stepup_count;
+                    // f[SDcount] = stepup_flag;
+                    // g[SDcount] = stepdown_count;
+                    // h[SDcount] = stepdown_flag;
+
+                    // j[SDcount] = front_syusoku;
+                    // k[SDcount] = back_syusoku;
+
+                    // Q[SDcount] = roboclawCmd0;
+                    // R[SDcount] = roboclawCmd1;
+                    // S[SDcount] = roboclawCmd2;
+
+                    
+
+                    // l[SDcount] = air_up_flag;
+                    // m[SDcount] = autonomous.send_num;
+                    // n[SDcount] = kouden1read;
+                    // o[SDcount] = kouden2read;
+                    // p[SDcount] = kouden3read;
+                    // q[SDcount] = cubeIndex;
+                    // r[SDcount] = nextIndex;
+                    // s[SDcount] = overstep_phase;
+                    // t[SDcount] = downstep_phase;
+                    // // m[SDcount] = overstep_R1_phase;
+                    // // n[SDcount] = downstep_R1_phase;
+                    // o[SDcount] = hold_phase;
+
+                    // q[SDcount] = mode;
+
+                    // r[SDcount] = next_box_state;
+
+                    // u[SDcount] = limit4read;
+                    // v[SDcount] = limit5read;
+                    // w[SDcount] = autonomous.up_num;
+
+                    // // v[SDcount] = autonomous.lift_check;
+                    // // r[SDcount] = ControlMode;
+                    // // w[SDcount] = back_wheel_flag;
+                    // x[SDcount] = autonomous.route_num;
+                    // y[SDcount] = route[autonomous.route_num].num;
+                    // z[SDcount] = back_wheel_flag;
+
+                    // U[SDcount] = autonomous.rotate_radian;
+                    // V[SDcount] = ref_lift_front_posi;
+                    // W[SDcount] = ref_lift_back_posi;
+
+                    // X[SDcount] = front_lift_posi;
+                    // Y[SDcount] = back_lift_posi;
+
                     A[SDcount] = gPosi.y;
                     B[SDcount] = gPosi.x;
                     C[SDcount] = gPosi.z;
@@ -4427,7 +3389,7 @@ sprintf(str,"[INFO]bno on\n");
                     P[SDcount] = lrtbPosi.z;
                     
                     
-                    S[SDcount] = normalspeed_x;
+                    S[SDcount] = vel_lift_back;
                     T[SDcount] = normalspeed_y;
                     U[SDcount] = normalspeed_z;
 
@@ -4438,12 +3400,12 @@ sprintf(str,"[INFO]bno on\n");
                     f[SDcount] = air_up_flag;
                     g[SDcount] = autonomous.send_num;
                     h[SDcount] = kouden1read;
-                    j[SDcount] = kouden2read;
+                    j[SDcount] = front_syusoku;
                     p[SDcount] = kouden3read;
-                    k[SDcount] = cubeIndex;
-                    l[SDcount] = nextIndex;
-                    m[SDcount] = overstep_phase;
-                    n[SDcount] = downstep_phase;
+                    k[SDcount] = back_syusoku;
+                    l[SDcount] = back_wheel_flag;
+                    m[SDcount] = stepup_count;
+                    n[SDcount] = stepdown_count;
                     // m[SDcount] = overstep_R1_phase;
                     // n[SDcount] = downstep_R1_phase;
                     o[SDcount] = hold_phase;
@@ -4469,6 +3431,11 @@ sprintf(str,"[INFO]bno on\n");
 
                     Q[SDcount] = front_lift_posi;
                     G[SDcount] = back_lift_posi;
+
+                    c[SDcount] = air_state;
+
+
+                    // gPosi.y,gPosi.x,gPosi.z,refV.y,refV.x,refV.z,pre_angle,autonomous.phase,autonomous.getPathNum(),autonomous.get_t_be(),autonomous.onx(),autonomous.ony(),autonomous.angle(),autonomous.Px(3),autonomous.Py(3),autonomous.syusoku,timer.read_ms(),lrtbPosi.y,lrtbPosi.x,lrtbPosi.z,stepup_count,stepup_flag,stepdown_count,stepdown_flag,front_syusoku,back_syusoku,roboclawCmd0,roboclawCmd1,roboclawCmd2,air_up_flag,autonomous.send_num,kouden1read,kouden2read,kouden3read,cubeIndex,nextIndex,overstep_phase,downstep_phase,hold_phase,mode,next_box_state,limit4read,limit5read,autonomous.up_num,autonomous.route_num,route[autonomous.route_num].num,back_wheel_flag,autonomous.rotate_radian,ref_lift_front_posi,ref_lift_back_posi,front_lift_posi,back_lift_posi/n
 
 
                     // IQ0[SDcount] = platform.Iq_meas0;
@@ -4520,13 +3487,13 @@ sprintf(str,"[INFO]bno on\n");
         // sprintf(str,"phase:%d  ",autonomous.phase );
         // invoke_print(str);
         // // // //最終的な自己位置
-        sprintf(str,"g,%4.4lf,%4.4lf,%4.4lf ", gPosi.x, gPosi.y, gPosi.z);
-        invoke_print(str);
-        // // // //速度指令
-        sprintf(str,"%4.4lf,%4.4lf,%4.4lf phase:%d  %d  %d  %d  %d  %d %d %lf %lf %lf %lf", refV.x, refV.y, refV.z,autonomous.phase,roboclawCmd0,roboclawCmd1,roboclawCmd2,limit8read,limit9read,flag_lift,front_lift_posi,back_lift_posi,ref_lift_front_posi,ref_lift_back_posi);
+        // sprintf(str,"g,%4.4lf,%4.4lf,%4.4lf ", gPosi.x, gPosi.y, gPosi.z);
+        // invoke_print(str);
+        // // // // //速度指令
+        sprintf(str,"%4.4lf,%4.4lf,%4.4lf phase:%d  %d  %d  %d  %d  %d %d %lf %lf %lf %lf %d %d %lf %d", refV.x, refV.y, refV.z,autonomous.phase,roboclawCmd0,roboclawCmd1,roboclawCmd2,limit8read,limit9read,flag_lift,front_lift_posi,back_lift_posi,ref_lift_front_posi,ref_lift_back_posi,stepup_count,air_state,vel_lift_back,air_state);
         invoke_print(str);
 
-        
+        // sprintf(str, "%d, %lf, %lf, %d",roboclawCmd2,);
         
         // sprintf(str," refkakudo:%4.4lf ",ref_kakudo);
         // invoke_print(str);

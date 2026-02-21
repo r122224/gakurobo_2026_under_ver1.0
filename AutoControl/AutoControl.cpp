@@ -398,7 +398,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         gpath_y[0] = gPosi.y;
         gpath_y[1] = 1;
         gpath_y[2] = 0.8;
-        gpath_y[3] = 0.52;
+        gpath_y[3] = 0.49;
         // gpath_y[3] = 0.45;
         set_para2(gpath_x, gpath_y, M_PI/2, 0.5, 3.00, 3.00);
         phase = 101;
@@ -442,9 +442,12 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         //     phase = 108;
         if ((nextPhase & PUSH_BUTTON) == PUSH_BUTTON) {
             send_num = 2;
-            if(up_num == 2){//槍先を離した
-                phase = 108;
-            }
+            // if(up_num == 2){//槍先を離した
+            //     phase = 108;
+            // }
+        }
+        if(up_num == 2){//槍先を離した
+            phase = 108;
         }
     break;
     case 108: //少し離れる
@@ -465,6 +468,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     case 111: //旋回
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 200, DEFAULT);
     break;
+
     case 200://forest前に移動
         motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
@@ -839,7 +843,14 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 202, DEFAULT);
     break;
 
+    case 240://旋回して横移動
+        motion.setPathNum(0, 0);
+        setConvPara(0.01, 0.998);
 
+    break;
+    case 241:
+        
+    break;
 
 
     case 300:

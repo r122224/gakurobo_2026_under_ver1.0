@@ -5,6 +5,37 @@
 #define M_PI           3.14159265358979323846
 #endif
 
+//学ロボ2026
+#define RED 0
+#define BLUE 1
+#define COLLECT_NUM 4
+
+#define front_lift_init 419.48
+#define back_lift_init  204.91
+
+#define HIGH_COLLECT_POSI   222.48
+#define LOW_COLLECT_POSI     22.48
+#define STORAGE_POSI         92.48
+
+#define STEP_UP_FRONT_HIGH     240
+#define STEP_UP_FRONT_LOW      -20
+#define STEP_UP_BACK_HIGH       40
+#define STEP_UP_BACK_LOW      -220
+
+#define STEP_DOWN_FRONT_HIGH    30
+#define STEP_DOWN_FRONT_LOW   -180
+#define STEP_DOWN_BACK_HIGH    230
+#define STEP_DOWN_BACK_LOW     -30
+
+#define FRONT_INIT          419.48
+#define BACK_INIT           204.91
+
+#define EDGE_MOVE 0.308
+
+#define DFRONT 0
+#define DRIGHT 1
+#define DLEFT  2
+#define DBACK  3
 
 struct coords {
     double x;
@@ -116,37 +147,6 @@ struct pidGain {
     float Kd;
 };
 
-//学ロボ2026
-#define RED 0
-#define BLUE 1
-#define COLLECT_NUM 4
-
-#define front_lift_init 419.48
-#define back_lift_init  204.91
-
-#define HIGH_COLLECT_POSI   222.48
-#define LOW_COLLECT_POSI     22.48
-#define STORAGE_POSI         92.48
-
-#define STEP_UP_FRONT_HIGH     240
-#define STEP_UP_FRONT_LOW      -40
-#define STEP_UP_BACK_HIGH       40
-#define STEP_UP_BACK_LOW      -240
-
-#define STEP_DOWN_FRONT_HIGH    30
-#define STEP_DOWN_FRONT_LOW   -180
-#define STEP_DOWN_BACK_HIGH    230
-#define STEP_DOWN_BACK_LOW     -30
-
-#define FRONT_INIT          419.48
-#define BACK_INIT           204.91
-
-#define EDGE_MOVE 0.308
-
-#define DFRONT 0
-#define DRIGHT 1
-#define DLEFT  2
-#define DBACK  3
 
 //front 420.18
 //back  204.91
