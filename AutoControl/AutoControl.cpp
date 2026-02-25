@@ -481,7 +481,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 202, DEFAULT);
     break;
     case 202://旋回の確認
-        if(route[route_num].num >= 12){
+        if(route[route_num].num >= 15){
             phase = 240;
         }
 
@@ -670,12 +670,13 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     case 215:
         //次が回収しないで段越えのときは昇降そのまま
         //次が通過でhight_flag = 2で次も2のとき昇降そのまま段越えの
-        route[route_num + 1] = route[route_num];
-        route_num += 1;
+        // route[route_num + 1] = route[route_num];
+        // route_num += 1;
 
         if(hight_flag == 2 && hight_flag2 == 2){
             set_front_posi = HIGH_COLLECT_POSI;
-            phase = 202;
+            flag_hi2hi = true;
+            phase = 216;
         }else{
             set_front_posi = STORAGE_POSI;
             if(front_syusoku){
@@ -685,7 +686,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
             }
         }
         if(up_num == 4){
-            phase = 202;
+            phase = 216;
         }
             //収束したら格納していいよ，格納
             //格納終わったらphase = 202に返す
@@ -693,6 +694,11 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         // route[route_num + 1] = route[route_num];
         // route_num += 1;
 
+    break;
+    case 216:
+        route[route_num + 1] = route[route_num];
+        route_num += 1;
+        phase = 202;
     break;
 
 
@@ -782,11 +788,17 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         //段越え段降りの処理
     break;
 
+
     case 225://mainで登った，または降りたらこのフェーズに移行するに
         motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
         set_para(forest[route[route_num + 1].num].x, forest[route[route_num + 1].num].y, setz, 0.5, 3.00, 3.00);
-        phase = 226;
+        if(flag_hi2hi){
+            if(up_num == 4)
+                phase = 226;
+        }else{
+            phase = 226;
+        }
     break;
 
     case 226://次のマスの中心に移動する
@@ -899,6 +911,8 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
 
     case 237://段の中央に移動
         // route_num += 1;
+        if(front_syusoku && up_num == 5)
+            send_num = 12;
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 238, DEFAULT);
     break;
 

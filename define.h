@@ -10,8 +10,8 @@
 #define BLUE 1
 #define COLLECT_NUM 4
 
-#define front_lift_init 419.48//397.751118//0//419.48
-#define back_lift_init  204.91//196.002715//0//204.91
+#define front_lift_init 400//0//419.48//397.751118//0//419.48//398//579//400
+#define back_lift_init  195//0//204.91//196.002715//0//204.91//195//
 // -397.751118 -196.002715
 
 #define HIGH_COLLECT_POSI   222.48

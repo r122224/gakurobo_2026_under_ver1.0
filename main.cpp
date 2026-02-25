@@ -35,9 +35,10 @@
 
 #include "UDPSocketComm.h"
 
-
 // |-----|-----|-----|
-// | 1 2 | 1 3 | 1 4 | 出口
+// | 1 5 | 1 6 | 1 7 | 出口
+// |-----|-----|-----|
+// | 1 2 | 1 3 | 1 4 |
 // |-----|-----|-----|
 // |  9  | 1 0 | 1 1 |
 // |-----|-----|-----|
@@ -50,15 +51,37 @@
 
 // #define 
 //1:回収 2:通過 3:回収通過
-forest_route route[8] = {
-    {1,2},
-    {4,2},
-    {7,2},
-    {8,1},
-    {6,1},
-    {10,2},
-    {11,1},
-    {13,2}
+// forest_route route[8] = {
+//     {1,2},
+//     {4,2},
+//     {7,2},
+//     {8,1},
+//     {6,1},
+//     {10,2},
+//     {13,3},
+//     {16,2}
+// };
+// forest_route route[9] = {
+//     {1,2},
+//     {4,2},
+//     {5,1},
+//     {7,2},
+//     {10,2},
+//     {9,1},
+//     {13,2},
+//     {14,1},
+//     {16,2}
+// };
+forest_route route[9] = {
+    {2,2},
+    {5,2},
+    {8,3},
+    {11,2},
+    {14,2},
+    {17,2},
+    {17,2},
+    {17,2},
+    {17,2}
 };
 
 #define UART 0
@@ -799,6 +822,15 @@ controllPoint forestPosition[18] = {
     {5.0,1.8}, {5.0,3.0}, {5.0,4.2},
     {3.8,1.8}, {3.8,3.0}, {3.8,4.2},
     {2.6,1.8}, {2.6,3.0}, {2.6,4.2}
+};
+
+int change_num[18] = {
+    15,16,17,
+    12,13,14,
+    9,10,11,
+    6,7,8,
+    3,4,5,
+    0,1,2
 };
 
 // controllPoint forestPosi5[18] = {
@@ -1766,7 +1798,7 @@ sprintf(str,"[INFO]bno on\n");
     invoke_print(str);
 
     // autonomous.route_num = 2;
-    // autonomous.phase = 202;
+    // autonomous.phase = 215;
 
 //割り込み処理の開始
   flipper.attach(&timer_warikomi, INT_TIME);
@@ -2210,7 +2242,7 @@ sprintf(str,"[INFO]bno on\n");
             // sprintf(str, "time,phase,syusoku,gPosi.y,gPosi.x,gPosi.z,,refV.y,refV.x,refV.z,,lrtb.y,lrtb.x,lrtb.z,Py,Px,,send_num,air,kouden1,front_syusoku,kouden3,back_syusoku,back_wheel_flag, stepup_count, stepdown_count, holdstep,,cmd0,cmd1,cmd2,,mode,nbox,,limit,,up,lift,c_M,back,rad,ref, ,\n");
             sprintf(str, "time,,gPosi.y,gPosi.x,gPosi.z,refV.y,refV.x,refV.z,,phase,getPathNum,get_t_be,onx,ony,angle,Px(3),Py(3),,lrtbPosi.y,lrtbPosi.x,lrtbPosi.z,,roboclawCmd0,roboclawCmd1,roboclawCmd2,ref_lift_front_posi,ref_lift_back_posi,front_lift_posi,");
             mySD.write_logdata(str);
-            sprintf(str, "back_lift_posi,,front_syusoku,back_syusoku,stepup_flag,stepup_count,stepdown_flag,stepdown_count,kouden1read,kouden3read,air_state,limit4read,limit5read,up_num,send_num,route_num,route[autonomous.route_num].num,,cubeIndex,direction_flag,setx,sety,setz\n");
+            sprintf(str, "back_lift_posi,,front_syusoku,back_syusoku,stepup_flag,stepup_count,stepdown_flag,stepdown_count,kouden1read,kouden3read,air_state,limit4read,limit5read,up_num,send_num,route_num,route[autonomous.route_num].num,,cubeIndex,direction_flag,setx,sety,setz,,cubeIndex\n");
             mySD.write_logdata(str);
             // sprintf(str, "gPosi.y,gPosi.x,gPosi.z,refV.y,refV.x,refV.z,pre_angle,autonomous.phase,autonomous.getPathNum(),autonomous.get_t_be(),autonomous.onx(),autonomous.ony(),autonomous.angle()");
             // mySD.write_logdata(str);
@@ -2231,7 +2263,7 @@ sprintf(str,"[INFO]bno on\n");
                 // sprintf(str,"%d,%d,%d,%lf,%lf,%lf,,%lf,%lf,%lf,,%lf,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%lf,%lf,%lf,,%d,%d,,%d,%d,%d,%d,%d,%d,%lf,%lf,%lf ,%lf,%lf\n",e[i], a[i], d[i], A[i], B[i], C[i], D[i], E[i], F[i], M[i], O[i], P[i], N[i], L4[i], g[i], f[i], h[i], j[i], p[i], k[i], l[i], m[i], n[i], o[i], V[i], R[i], W[i],q[i], r[i],s[i],t[i],u[i],v[i],r[i],w[i],X[i],Y[i],Z[i],Q[i],G[i]);
                 // mySD.write_logdata(str);
                 // sprintf(str,"%d,%d,%d,%lf,%lf,%lf,,%lf,%lf,%lf,,%lf,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%lf,%lf,%lf,,%d,%d,,%d,%d,%d,%d,%d,%d,%lf,%lf,%lf ,%lf,%lf ,%lf ,%d\n",e[i], a[i], d[i], A[i], B[i], C[i], D[i], E[i], F[i], M[i], O[i], P[i], N[i], L4[i], g[i], f[i], h[i], j[i], p[i], k[i], l[i], m[i], n[i], o[i], V[i], R[i], W[i],q[i], r[i],s[i],t[i],u[i],v[i],r[i],w[i],X[i],Y[i],Z[i],Q[i],G[i],T[i],c[i]);
-                sprintf(str,"%d,,%lf,%lf,%lf,%lf,%lf,%lf,,%d,%d,%lf,%lf,%lf,%lf,%lf,%lf,,%lf,%lf,%lf,,%d,%d,%d,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%d,%d,%lf,%lf,%lf,%d\n",z[i],A[i],B[i],C[i],D[i],E[i],F[i],a[i],b[i],G[i],H1[i],I[i],J[i],K[i],L4[i],M[i],N[i],O[i],c[i],d[i],e[i],P[i],Q[i],R[i],S[i],f[i],g[i],h[i],j[i],k[i],l[i],m[i],n[i],o[i],p[i],q[i],r[i],s[i],t[i],u[i],v[i],w[i],T[i],U[i],V[i],W[i],X[i],x[i]);
+                sprintf(str,"%d,,%lf,%lf,%lf,%lf,%lf,%lf,,%d,%d,%lf,%lf,%lf,%lf,%lf,%lf,,%lf,%lf,%lf,,%d,%d,%d,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%d,%d,%lf,%lf,%lf,%d,%d\n",z[i],A[i],B[i],C[i],D[i],E[i],F[i],a[i],b[i],G[i],H1[i],I[i],J[i],K[i],L4[i],M[i],N[i],O[i],c[i],d[i],e[i],P[i],Q[i],R[i],S[i],f[i],g[i],h[i],j[i],k[i],l[i],m[i],n[i],o[i],p[i],q[i],r[i],s[i],t[i],u[i],v[i],w[i],T[i],U[i],V[i],W[i],X[i],x[i],y[i]);
                 mySD.write_logdata(str);
                 i++;
             }
@@ -2518,7 +2550,7 @@ sprintf(str,"[INFO]bno on\n");
                 }
             }
             
-            
+            cubeIndex = change_num[route[autonomous.route_num].num];
 
             if(mode == MODE_FOREST){
                 //使える壁（旋回の時，前か後）----------------------------------
@@ -2761,7 +2793,17 @@ sprintf(str,"[INFO]bno on\n");
 
                     }
                 }else if(mode == MODE_FOREST){//forest
-                    if(autonomous.phase == 20){//旋回前に自己位置の補正
+                    if(autonomous.phase == 214){
+                        // if(route[autonomous.route_num].num ==  0 || route[autonomous.route_num].num == 2 || route[autonomous.route_num].num == 3 || route[autonomous.route_num].num == 4 || route[autonomous.route_num].num == 7 || route[autonomous.route_num].num == 8 || route[autonomous.route_num].num == 12){
+
+                        // }
+                        // route[autonomous.route_num].num == 
+                    }
+                    if(autonomous.phase == 226 || autonomous.phase == 237){
+
+                    }
+
+                    if(autonomous.phase == 202){//旋回前に自己位置の補正
                         // if(next_box_state == 0){
                             if(flag_use_front && flag_lrtb_front){
                                 // lrtbPosi.x = forest_Posi[cubeIndex].front - distance_front;
@@ -3070,6 +3112,7 @@ sprintf(str,"[INFO]bno on\n");
                 break;
                 case 3://昇降を上げる
                     ref_lift_front_posi = STORAGE_POSI;
+                    autonomous.set_front_posi = STORAGE_POSI;
                     ref_lift_back_posi = STEP_UP_BACK_HIGH;
                     if(back_syusoku == 1 && front_syusoku == 1){
                         stepup_count = 0;
@@ -3078,6 +3121,8 @@ sprintf(str,"[INFO]bno on\n");
                             autonomous.phase = 225;
                         if(autonomous.phase == 2236)
                             autonomous.phase = 236;
+                        if(autonomous.flag_hi2hi)
+                            autonomous.send_num = 12;
                     }
                 break;
                 // case 4://後輪動かす
@@ -3124,7 +3169,7 @@ sprintf(str,"[INFO]bno on\n");
                     air_state = true;
                     air_up_flag = true;
                     refV.x = 0.3;
-                    if(pre_kouden3read == 1 && kouden3read == 0){//止める
+                    if(pre_kouden3read == 0 && kouden3read == 1){//止める
                         vel_lift_back = 0.00;
                         ControlMode = AUTO_MODE;
                         autostep_mode = false;
@@ -3554,6 +3599,7 @@ sprintf(str,"[INFO]bno on\n");
                     X[SDcount] = autonomous.diffy;
 
                     x[SDcount] = autonomous.khs;
+                    y[SDcount] = cubeIndex;
 
 
 
