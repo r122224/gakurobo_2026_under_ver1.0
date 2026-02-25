@@ -334,7 +334,7 @@ void Platform::VelocityControl(coords refV)
         refOmegaD = (+refV.x + refV.y + refV.z * ( TREAD_2 + WHEELBASE_2 ) ) / WHEEL_R;// 右前 rad/s
 
         // RoboClawの指令値に変換
-        double mdCmdA, mdCmdB, mdCmdC, mdCmdD;
+        // double mdCmdA, mdCmdB, mdCmdC, mdCmdD;
         mdCmdA = refOmegaA * _2RES_PI;
         mdCmdB = refOmegaB * _2RES_PI;
         mdCmdC = refOmegaC * _2RES_PI;

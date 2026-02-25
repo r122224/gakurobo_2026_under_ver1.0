@@ -24,7 +24,7 @@
 #define STEP_UP_BACK_LOW      -220
 
 #define STEP_DOWN_FRONT_HIGH    30
-#define STEP_DOWN_FRONT_LOW   -180
+#define STEP_DOWN_FRONT_LOW   -170
 #define STEP_DOWN_BACK_HIGH    230
 #define STEP_DOWN_BACK_LOW     -30
 

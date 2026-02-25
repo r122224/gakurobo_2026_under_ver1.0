@@ -75,7 +75,7 @@
 forest_route route[9] = {
     {2,2},
     {5,2},
-    {8,3},
+    {8,2},
     {11,2},
     {14,2},
     {17,2},
@@ -352,7 +352,7 @@ mySDclass mySD;
 int SDcount = 0;
 int a[30000], b[30000], c[30000], d[30000], e[30000], f[30000], g[30000], h[30000], i_[30000], j[30000], k[30000], l[30000], m[30000], n[30000], o[30000], p[30000], q[30000], r[30000], s[30000],t[30000],u[30000],v[30000],w[30000],x[30000],y[30000],z[30000];
 double A[30000], B[30000], C[30000], D[30000], E[30000], F[30000], G[30000],
-    H1[30000], I[30000], J[30000], K[30000], L4[30000], N[30000], M[30000], O[30000],P[30000],Q[30000],R[30000],S[30000],T[30000],U[30000],V[30000],W[30000],X[30000],Y[30000],Z[30000],Y1[30000],Z1[30000];
+    H1[30000], I[30000], J[30000], K[30000], L4[30000], N[30000], M[30000], O[30000],P[30000],Q[30000],R[30000],S[30000],T[30000],U[30000],V[30000],W[30000],X[30000],Y[30000],Z[30000],Y1[30000],Z1[30000],O1[30000],O2[30000],O3[30000],O4[30000];
 char str[255];
 bool flag_SDwrite = true, LED_SDwrite = false;
 
@@ -2263,6 +2263,8 @@ sprintf(str,"[INFO]bno on\n");
                 // sprintf(str,"%d,%d,%d,%lf,%lf,%lf,,%lf,%lf,%lf,,%lf,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%lf,%lf,%lf,,%d,%d,,%d,%d,%d,%d,%d,%d,%lf,%lf,%lf ,%lf,%lf\n",e[i], a[i], d[i], A[i], B[i], C[i], D[i], E[i], F[i], M[i], O[i], P[i], N[i], L4[i], g[i], f[i], h[i], j[i], p[i], k[i], l[i], m[i], n[i], o[i], V[i], R[i], W[i],q[i], r[i],s[i],t[i],u[i],v[i],r[i],w[i],X[i],Y[i],Z[i],Q[i],G[i]);
                 // mySD.write_logdata(str);
                 // sprintf(str,"%d,%d,%d,%lf,%lf,%lf,,%lf,%lf,%lf,,%lf,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%lf,%lf,%lf,,%d,%d,,%d,%d,%d,%d,%d,%d,%lf,%lf,%lf ,%lf,%lf ,%lf ,%d\n",e[i], a[i], d[i], A[i], B[i], C[i], D[i], E[i], F[i], M[i], O[i], P[i], N[i], L4[i], g[i], f[i], h[i], j[i], p[i], k[i], l[i], m[i], n[i], o[i], V[i], R[i], W[i],q[i], r[i],s[i],t[i],u[i],v[i],r[i],w[i],X[i],Y[i],Z[i],Q[i],G[i],T[i],c[i]);
+                // sprintf(str,"%d,,%lf,%lf,%lf,%lf,%lf,%lf,,%d,%d,%lf,%lf,%lf,%lf,%lf,%lf,,%lf,%lf,%lf,,%d,%d,%d,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%d,%d,%lf,%lf,%lf,%d,%d\n",z[i],A[i],B[i],C[i],D[i],E[i],F[i],a[i],b[i],G[i],H1[i],I[i],J[i],K[i],L4[i],M[i],N[i],O[i],c[i],d[i],e[i],P[i],Q[i],R[i],S[i],f[i],g[i],h[i],j[i],k[i],l[i],m[i],n[i],o[i],p[i],q[i],r[i],s[i],t[i],u[i],v[i],w[i],T[i],U[i],V[i],W[i],X[i],x[i],y[i]);
+                // mySD.write_logdata(str);
                 sprintf(str,"%d,,%lf,%lf,%lf,%lf,%lf,%lf,,%d,%d,%lf,%lf,%lf,%lf,%lf,%lf,,%lf,%lf,%lf,,%d,%d,%d,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%d,%d,%lf,%lf,%lf,%d,%d\n",z[i],A[i],B[i],C[i],D[i],E[i],F[i],a[i],b[i],G[i],H1[i],I[i],J[i],K[i],L4[i],M[i],N[i],O[i],c[i],d[i],e[i],P[i],Q[i],R[i],S[i],f[i],g[i],h[i],j[i],k[i],l[i],m[i],n[i],o[i],p[i],q[i],r[i],s[i],t[i],u[i],v[i],w[i],T[i],U[i],V[i],W[i],X[i],x[i],y[i]);
                 mySD.write_logdata(str);
                 i++;
@@ -2939,7 +2941,7 @@ sprintf(str,"[INFO]bno on\n");
                 }
             }
 
-            if((autonomous.phase == 212 || autonomous.phase == 224 || autonomous.phase == 232) && pre_kouden1read == 1 && kouden1read == 0){//後
+            if((autonomous.phase == 212 || autonomous.phase == 224 || autonomous.phase == 232) && pre_kouden1read == 1 && kouden1read == 0 && front_syusoku == true){//後
                 // platform.setPosi(coords {gPosi.x, gPosi.y, 0.0});
                 switch (autonomous.direction_flag) {
                     case DFRONT:
@@ -3539,10 +3541,14 @@ sprintf(str,"[INFO]bno on\n");
 
                     // %lf,%lf,%lf,%lf,%lf,%lf,
 
-                    G[SDcount] = autonomous.get_t_be();
-                    H1[SDcount] = autonomous.onx();
-                    I[SDcount] = autonomous.ony();
-                    J[SDcount] = autonomous.angle();
+                    // G[SDcount] = autonomous.get_t_be();
+                    // H1[SDcount] = autonomous.onx();
+                    // I[SDcount] = autonomous.ony();
+                    // J[SDcount] = autonomous.angle();
+                    G[SDcount] = platform.mdCmdA;
+                    H1[SDcount] = platform.mdCmdB;
+                    I[SDcount] = platform.mdCmdC;
+                    J[SDcount] = platform.mdCmdD;
                     K[SDcount] = autonomous.Px(3);
                     L4[SDcount] = autonomous.Py(3);
 
@@ -3600,6 +3606,12 @@ sprintf(str,"[INFO]bno on\n");
 
                     x[SDcount] = autonomous.khs;
                     y[SDcount] = cubeIndex;
+
+                    // O1[SDcount] = platform.mdCmdA;
+                    // O2[SDcount] = platform.mdCmdB;
+                    // O3[SDcount] = platform.mdCmdC;
+                    // O4[SDcount] = platform.mdCmdD;
+
 
 
 

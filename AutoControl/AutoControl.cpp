@@ -429,7 +429,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         //ここで回収できていなかったらphase = 3に戻り再回収をする．
         motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
-        set_para(gPosi.x, gPosi.y, -M_PI/2, 3.0, 3.00, 3.00);
+        set_para(setx, sety, -M_PI/2, 3.0, 3.00, 3.00);
         phase = 106;
     break;
     case 106://旋回する．

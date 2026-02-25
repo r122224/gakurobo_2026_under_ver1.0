@@ -33,6 +33,7 @@ public:
     void get_Current();
 
     double refV_x_cmd;//モータの速度を一定にして渡したいとき，同期したい
+    double mdCmdA, mdCmdB, mdCmdC, mdCmdD;
 
 private:
     coords Posi;
