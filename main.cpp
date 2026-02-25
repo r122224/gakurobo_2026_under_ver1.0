@@ -28,6 +28,8 @@
 // #include "SR04_peach.h"
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
+#include <iterator>
 #include <math.h>
 #include <string>
 
@@ -735,6 +737,7 @@ coords tar_Posi = {0.0, 0.0, 0.0};//取得目標値
 coords cam_posir = {0.0, 0.0, 0.0};
 coords cam_posil = {0.0, 0.0, 0.0};
 coords refV = {0.0, 0.0, 0.0};
+coords setPosi = {0.0, 0.0, 0.0};
 //↑ static 使うと autoControl class の extern が使えなくなるので注意
 //参考: http://www.picfun.com/pic18/mcc06.html
 
@@ -1426,7 +1429,7 @@ int main() {
 
     LEDblink(pin_led2, LEDBLINKING_TIME, LEDBLINKING_INTERVAL); // setup の進捗具合を表示
         
-    sprintf(str,"[INFO] connected controller1312222222222222\n");
+    sprintf(str,"[INFO] connected controller13122222222222622\n");
     invoke_print(str);
 
     joyLX_filter.setLowPassPara(MANUAL_LOWPASS_T, 0.0);
@@ -1762,6 +1765,9 @@ sprintf(str,"[INFO]bno on\n");
     sprintf(str,"[INFO] program start!\n");
     invoke_print(str);
 
+    // autonomous.route_num = 2;
+    // autonomous.phase = 202;
+
 //割り込み処理の開始
   flipper.attach(&timer_warikomi, INT_TIME);
   sprintf(str,"[INFO] set timer_warikomi\n");
@@ -2031,9 +2037,11 @@ sprintf(str,"[INFO]bno on\n");
                     flag_stop = true;
                 }
                 if(con.readButton(R2) == -1){//R2が離されたとき
+                    stepup_count += 1;
                     // platform.platformInit_Odrive();
                 }
                 if(con.readButton(L2) == -1){//L2が離されたとき
+                    stepup_flag = !stepup_flag;
                     // flag_stop = true;//速度0指令
                 }
                 if(con.readButton(MARU) == -1){
@@ -2199,7 +2207,10 @@ sprintf(str,"[INFO]bno on\n");
             // sprintf(str, "time,time_sum,gPosi.y,gPosi.x,gPosi.z,enc3_0,enc3_1,enc4_0,enc4_1,upenc0,upenc1,get_anglex,get_angley,rps1,rps2,errorstate\n");
             // sprintf(str, "time,phase,syusoku,gPosi.y,gPosi.x,gPosi.z,,refV.y,refV.x,refV.z,,lrtb.y,lrtb.x,lrtb.z,Py,Px,,send_num,air,kouden1,kouden2,kouden3,cubeid,nextid, overstep, downstep, holdstep,,cmd0,cmd1,cmd2,,mode,nbox,,limit,,up,lift,c_M,back,rad,ref,,\n");
             // sprintf(str, "time,phase,syusoku,gPosi.y,gPosi.x,gPosi.z,,refV.y,refV.x,refV.z,,lrtb.y,lrtb.x,lrtb.z,Py,Px,,send_num,air,kouden1,kouden2,kouden3,cubeid,nextid, overstep, downstep, holdstep,,cmd0,cmd1,cmd2,,mode,nbox,,limit,,up,lift,c_M,back,rad,ref,,\n");
-            sprintf(str, "time,phase,syusoku,gPosi.y,gPosi.x,gPosi.z,,refV.y,refV.x,refV.z,,lrtb.y,lrtb.x,lrtb.z,Py,Px,,send_num,air,kouden1,front_syusoku,kouden3,back_syusoku,back_wheel_flag, stepup_count, stepdown_count, holdstep,,cmd0,cmd1,cmd2,,mode,nbox,,limit,,up,lift,c_M,back,rad,ref, ,\n");
+            // sprintf(str, "time,phase,syusoku,gPosi.y,gPosi.x,gPosi.z,,refV.y,refV.x,refV.z,,lrtb.y,lrtb.x,lrtb.z,Py,Px,,send_num,air,kouden1,front_syusoku,kouden3,back_syusoku,back_wheel_flag, stepup_count, stepdown_count, holdstep,,cmd0,cmd1,cmd2,,mode,nbox,,limit,,up,lift,c_M,back,rad,ref, ,\n");
+            sprintf(str, "time,,gPosi.y,gPosi.x,gPosi.z,refV.y,refV.x,refV.z,,phase,getPathNum,get_t_be,onx,ony,angle,Px(3),Py(3),,lrtbPosi.y,lrtbPosi.x,lrtbPosi.z,,roboclawCmd0,roboclawCmd1,roboclawCmd2,ref_lift_front_posi,ref_lift_back_posi,front_lift_posi,");
+            mySD.write_logdata(str);
+            sprintf(str, "back_lift_posi,,front_syusoku,back_syusoku,stepup_flag,stepup_count,stepdown_flag,stepdown_count,kouden1read,kouden3read,air_state,limit4read,limit5read,up_num,send_num,route_num,route[autonomous.route_num].num,,cubeIndex,direction_flag,setx,sety,setz\n");
             mySD.write_logdata(str);
             // sprintf(str, "gPosi.y,gPosi.x,gPosi.z,refV.y,refV.x,refV.z,pre_angle,autonomous.phase,autonomous.getPathNum(),autonomous.get_t_be(),autonomous.onx(),autonomous.ony(),autonomous.angle()");
             // mySD.write_logdata(str);
@@ -2219,7 +2230,8 @@ sprintf(str,"[INFO]bno on\n");
             // sprintf(str,"%d,%d,%lf,%lf,%lf,%d,%d,%d,%d,%d,%d,%d,%d,%d\n",e[i],n[i],A[i],B[i],C[i],l[i],m[i],f[i],g[i],j[i],k[i],h[i],i_[i],a[i]);
                 // sprintf(str,"%d,%d,%d,%lf,%lf,%lf,,%lf,%lf,%lf,,%lf,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%lf,%lf,%lf,,%d,%d,,%d,%d,%d,%d,%d,%d,%lf,%lf,%lf ,%lf,%lf\n",e[i], a[i], d[i], A[i], B[i], C[i], D[i], E[i], F[i], M[i], O[i], P[i], N[i], L4[i], g[i], f[i], h[i], j[i], p[i], k[i], l[i], m[i], n[i], o[i], V[i], R[i], W[i],q[i], r[i],s[i],t[i],u[i],v[i],r[i],w[i],X[i],Y[i],Z[i],Q[i],G[i]);
                 // mySD.write_logdata(str);
-                sprintf(str,"%d,%d,%d,%lf,%lf,%lf,,%lf,%lf,%lf,,%lf,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%lf,%lf,%lf,,%d,%d,,%d,%d,%d,%d,%d,%d,%lf,%lf,%lf ,%lf,%lf ,%lf ,%d\n",e[i], a[i], d[i], A[i], B[i], C[i], D[i], E[i], F[i], M[i], O[i], P[i], N[i], L4[i], g[i], f[i], h[i], j[i], p[i], k[i], l[i], m[i], n[i], o[i], V[i], R[i], W[i],q[i], r[i],s[i],t[i],u[i],v[i],r[i],w[i],X[i],Y[i],Z[i],Q[i],G[i],T[i],c[i]);
+                // sprintf(str,"%d,%d,%d,%lf,%lf,%lf,,%lf,%lf,%lf,,%lf,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%lf,%lf,%lf,,%d,%d,,%d,%d,%d,%d,%d,%d,%lf,%lf,%lf ,%lf,%lf ,%lf ,%d\n",e[i], a[i], d[i], A[i], B[i], C[i], D[i], E[i], F[i], M[i], O[i], P[i], N[i], L4[i], g[i], f[i], h[i], j[i], p[i], k[i], l[i], m[i], n[i], o[i], V[i], R[i], W[i],q[i], r[i],s[i],t[i],u[i],v[i],r[i],w[i],X[i],Y[i],Z[i],Q[i],G[i],T[i],c[i]);
+                sprintf(str,"%d,,%lf,%lf,%lf,%lf,%lf,%lf,,%d,%d,%lf,%lf,%lf,%lf,%lf,%lf,,%lf,%lf,%lf,,%d,%d,%d,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%d,%d,%lf,%lf,%lf,%d\n",z[i],A[i],B[i],C[i],D[i],E[i],F[i],a[i],b[i],G[i],H1[i],I[i],J[i],K[i],L4[i],M[i],N[i],O[i],c[i],d[i],e[i],P[i],Q[i],R[i],S[i],f[i],g[i],h[i],j[i],k[i],l[i],m[i],n[i],o[i],p[i],q[i],r[i],s[i],t[i],u[i],v[i],w[i],T[i],U[i],V[i],W[i],X[i],x[i]);
                 mySD.write_logdata(str);
                 i++;
             }
@@ -2864,12 +2876,75 @@ sprintf(str,"[INFO]bno on\n");
                 } else { // |z_norm| >= 3π/4// 後ろ向き（±180度付近）
                     platform.setAxisPosi(M_PI, POSIZ);
                 }
+
+                switch (autonomous.direction_flag) {
+                    case DFRONT:
+                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x + 0.31;
+                        platform.setAxisPosi(setPosi.x, POSIX);
+                    break;
+                    case DRIGHT:
+                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y + 0.31;
+                        platform.setAxisPosi(setPosi.y, POSIY);
+                    break;
+                    case DLEFT:
+                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y - 0.31;
+                        platform.setAxisPosi(setPosi.y, POSIY);
+                    break;
+                    case DBACK:
+                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x - 0.31;
+                        platform.setAxisPosi(setPosi.x, POSIX);
+                    break;
+                }
+            }
+
+            if((autonomous.phase == 212 || autonomous.phase == 224 || autonomous.phase == 232) && pre_kouden1read == 1 && kouden1read == 0){//後
+                // platform.setPosi(coords {gPosi.x, gPosi.y, 0.0});
+                switch (autonomous.direction_flag) {
+                    case DFRONT:
+                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x + 0.31;
+                        platform.setAxisPosi(setPosi.x, POSIX);
+                    break;
+                    case DRIGHT:
+                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y + 0.31;
+                        platform.setAxisPosi(setPosi.y, POSIY);
+                    break;
+                    case DLEFT:
+                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y - 0.31;
+                        platform.setAxisPosi(setPosi.y, POSIY);
+                    break;
+                    case DBACK:
+                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x - 0.31;
+                        platform.setAxisPosi(setPosi.x, POSIX);
+                    break;
+                }
             }
             // else if(!limit4read && !limit5read){//右
             //     platform.setPosi(coords {2.0, 2.0, 1.0});
             // }else if(!limit6read && !limit7read){//左
             //     platform.setPosi(coords {gPosi.x, 3.0, 1.0});
             // }
+
+            if((autonomous.phase == 2225 || autonomous.phase == 2236)&& pre_kouden3read == 1 && kouden3read == 0){
+                switch (autonomous.direction_flag) {
+                    case DFRONT:
+                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x + 0.865;
+                        platform.setAxisPosi(setPosi.x, POSIX);
+                    break;
+                    case DRIGHT:
+                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y + 0.865;
+                        platform.setAxisPosi(setPosi.y, POSIY);
+                    break;
+                    case DLEFT:
+                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y - 0.865;
+                        platform.setAxisPosi(setPosi.y, POSIY);
+                    break;
+                    case DBACK:
+                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x - 0.865;
+                        platform.setAxisPosi(setPosi.x, POSIX);
+                    break;
+                }
+            }
+                
 
             
 
@@ -2883,6 +2958,9 @@ sprintf(str,"[INFO]bno on\n");
             pre_get_lift_front_count = get_lift_front_count;
             pre_get_lift_back_count = get_lift_back_count;
         }
+
+        // autonomous.route_num = 2;
+        // autonomous.phase = 202;
 
         // int flag_lift;
         //初期化の処理
@@ -2910,12 +2988,24 @@ sprintf(str,"[INFO]bno on\n");
                 if(autonomous.phase == 2225 || autonomous.phase == 2236){
                     switch (autonomous.hight_flag) {
                         case 2:
-                            stepup_flag = true;
-                            stepup_count = 1;
+                            if(!stepup_flag){
+                                stepup_flag = true;
+                                stepup_count = 1;
+                                back_syusoku = false;
+                                front_syusoku = false;
+                                ref_lift_front_posi = STEP_UP_FRONT_LOW;
+                                ref_lift_back_posi = STEP_UP_BACK_LOW;
+                            }
                         break;
                         case -2:
-                            stepdown_flag = true;
-                            stepdown_count = 1;
+                            if(!stepdown_flag){
+                                stepdown_flag = true;
+                                stepdown_count = 1;
+                                back_syusoku = false;
+                                front_syusoku = false;
+                                ref_lift_front_posi = STEP_DOWN_FRONT_LOW;
+                                ref_lift_back_posi = STEP_DOWN_BACK_LOW;
+                            }
                         break;
                     }
                 }
@@ -2943,8 +3033,8 @@ sprintf(str,"[INFO]bno on\n");
         }
         //端移動 232,224,212
 
-        stepup_flag = true;
-        stepup_count = 2;
+        // stepup_flag = true;
+        // stepup_count = 2;
 
         if(stepup_flag){
             switch (stepup_count) {
@@ -2955,12 +3045,15 @@ sprintf(str,"[INFO]bno on\n");
                         stepup_count = 2;
                 break;
                 case 2://前移動
-                    vel_lift_back = 0.08;
+                    ref_lift_front_posi = STEP_UP_FRONT_LOW;
+                    ref_lift_back_posi = STEP_UP_BACK_LOW;
+                    vel_lift_back = 0.8;
                     ControlMode = MANUAL_MODE;
                     autostep_mode = true;
                     air_state = true;
                     air_up_flag = true;
                     refV.x = 0.3;
+                    pc.printf("%lf,%d,%d\n",vel_lift_back,air_state,air_up_flag);
                     if(pre_kouden3read == 1 && kouden3read == 0){//止める
                         vel_lift_back = 0.00;
                         ControlMode = AUTO_MODE;
@@ -2968,6 +3061,10 @@ sprintf(str,"[INFO]bno on\n");
                         refV.x = 0.0;
                         air_state = false;
                         air_up_flag = false;
+                        back_syusoku = false;
+                        front_syusoku = false;
+                        ref_lift_front_posi = STORAGE_POSI;
+                        ref_lift_back_posi = STEP_UP_BACK_HIGH;
                         stepup_count = 3;
                     }
                 break;
@@ -3014,12 +3111,14 @@ sprintf(str,"[INFO]bno on\n");
             switch (stepdown_count) {
                 case 1://足下げる
                     ref_lift_front_posi = STEP_DOWN_FRONT_LOW;
-                    ref_lift_back_posi = STEP_DOWN_BACK_LOW ;
+                    ref_lift_back_posi = STEP_DOWN_BACK_LOW;
                     if(back_syusoku == true && front_syusoku == true)
                         stepdown_count = 2;
                 break;
                 case 2://前移動
-                    vel_lift_back = 0.03;
+                    ref_lift_front_posi = STEP_DOWN_FRONT_LOW;
+                    ref_lift_back_posi = STEP_DOWN_BACK_LOW;
+                    vel_lift_back = 0.3;
                     ControlMode = MANUAL_MODE;
                     autostep_mode = true;
                     air_state = true;
@@ -3032,6 +3131,10 @@ sprintf(str,"[INFO]bno on\n");
                         air_state = false;
                         air_up_flag = false;
                         refV.x = 0.0;
+                        back_syusoku = false;
+                        front_syusoku = false;
+                        ref_lift_front_posi = STEP_DOWN_FRONT_HIGH;
+                        ref_lift_back_posi = STEP_DOWN_BACK_HIGH;
                         stepdown_count = 3;
                     }
                 break;
@@ -3078,9 +3181,10 @@ sprintf(str,"[INFO]bno on\n");
         //段越え機構関連のモーター指令
         if(flag_lift == 2){
             if(ref_lift_front_posi - front_lift_posi > 80){
-                roboclawCmd0 = ms_qpps(1.0,500,0.026,1.0);
+                roboclawCmd0 = ms_qpps(0.3,500,0.026,1.0);
                 front_syusoku = false;
             }else if(ref_lift_front_posi - front_lift_posi < -80){
+                // roboclawCmd0 = ms_qpps(-1.0,500,0.026,1.0);
                 roboclawCmd0 = ms_qpps(-1.0,500,0.026,1.0);
                 front_syusoku = false;
             }else if(abs(ref_lift_front_posi - front_lift_posi) < 5){
@@ -3088,7 +3192,7 @@ sprintf(str,"[INFO]bno on\n");
                 front_syusoku = true;
             }else{
                 front_syusoku = false;
-                double vel = PID_lift_front_up.getCmd(ref_lift_front_posi, front_lift_posi, 0.6);
+                double vel = PID_lift_front_up.getCmd(ref_lift_front_posi, front_lift_posi, 0.3);
                 roboclawCmd0 = ms_qpps(vel,500,0.026,1.0);
             }
             pc.printf(" %d ",roboclawCmd0);
@@ -3099,9 +3203,10 @@ sprintf(str,"[INFO]bno on\n");
             }
 
             if(ref_lift_back_posi - back_lift_posi > 80){
-                roboclawCmd1 = ms_qpps(1.0,500,0.026,1.0);
+                roboclawCmd1 = ms_qpps(0.3,500,0.026,1.0);
                 back_syusoku = false;
             }else if(ref_lift_back_posi - back_lift_posi < -80){
+                // roboclawCmd1 = ms_qpps(-1.0,500,0.026,1.0);
                 roboclawCmd1 = ms_qpps(-1.0,500,0.026,1.0);
                 back_syusoku = false;
             }else if(abs(ref_lift_back_posi - back_lift_posi) < 5){
@@ -3109,7 +3214,7 @@ sprintf(str,"[INFO]bno on\n");
                 back_syusoku = true;
             }else{
                 back_syusoku = false;
-                double vel = PID_lift_back_up.getCmd(ref_lift_back_posi, back_lift_posi, 0.6);
+                double vel = PID_lift_back_up.getCmd(ref_lift_back_posi, back_lift_posi, 0.3);
                 roboclawCmd1 = ms_qpps(vel,500,0.026,1.0);
             }
             if(roboclawCmd1 >= 0){
@@ -3363,76 +3468,160 @@ sprintf(str,"[INFO]bno on\n");
                     // X[SDcount] = front_lift_posi;
                     // Y[SDcount] = back_lift_posi;
 
+                    // %d,,%lf,%lf,%lf,%lf,%lf,%lf,,%d,%d,%lf,%lf,%lf,%lf,%lf,%lf,,%lf,%lf,%lf,,%d,%d,%d,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n
+
+                    // time,,gPosi.y,gPosi.x,gPosi.z,refV.y,refV.x,refV.z,,phase,getPathNum,get_t_be,onx,ony,angle,Px(3),Py(3),,lrtbPosi.y,lrtbPosi.x,lrtbPosi.z,,roboclawCmd0,roboclawCmd1,roboclawCmd2,ref_lift_front_posi,ref_lift_back_posi,front_lift_posi,back_lift_posi,front_syusoku,back_syusoku,stepup_flag,stepup_count,stepdown_flag,stepdown_count,kouden1read,kouden3read,air_state,limit4read,limit5read,up_num,send_num,route_num,route[autonomous.route_num].num\n
+
+                    // %d,
+
+                    // z[i],,A[i],B[i],C[i],D[i],E[i],F[i],,a[i],b[i],G[i],H1[i],I[i],J[i],K[i],L4[i],,M[i],N[i],O[i],,c[i],d[i],e[i],P[i],Q[i],R[i],S[i],,f[i],g[i],h[i],j[i],k[i],l[i],m[i],n[i],o[i],p[i],q[i],r[i],s[i],t[i],u[i]\n
+
+                    z[SDcount] = timer.read_ms();
+
+                    // %lf,%lf,%lf,%lf,%lf,%lf,
+
                     A[SDcount] = gPosi.y;
                     B[SDcount] = gPosi.x;
                     C[SDcount] = gPosi.z;
                     D[SDcount] = refV.y;
                     E[SDcount] = refV.x;
                     F[SDcount] = refV.z;
-                    K[SDcount] = pre_angle;
+
+                    // %d,%d,
+
                     a[SDcount] = autonomous.phase;
                     b[SDcount] = autonomous.getPathNum();
+
+                    // %lf,%lf,%lf,%lf,%lf,%lf,
+
                     G[SDcount] = autonomous.get_t_be();
                     H1[SDcount] = autonomous.onx();
                     I[SDcount] = autonomous.ony();
                     J[SDcount] = autonomous.angle();
-                    L4[SDcount] = autonomous.Px(3);
-                    N[SDcount] = autonomous.Py(3);
-                    //   M[SDcount] = autonomous.lim_refVz();
-                    //   c[SDcount] = autonomous.acc_process();
-                    d[SDcount] = autonomous.syusoku;
-                    // e[SDcount] = interval_time;
-                    e[SDcount] = timer.read_ms();
+                    K[SDcount] = autonomous.Px(3);
+                    L4[SDcount] = autonomous.Py(3);
+
+                    // %lf,%lf,%lf,
 
                     M[SDcount] = lrtbPosi.y;
-                    O[SDcount] = lrtbPosi.x;
-                    P[SDcount] = lrtbPosi.z;
+                    N[SDcount] = lrtbPosi.x;
+                    O[SDcount] = lrtbPosi.z;
+
+                    // %d,%d,%d,
+
+                    c[SDcount] = roboclawCmd0;
+                    d[SDcount] = roboclawCmd1;
+                    e[SDcount] = roboclawCmd2;
+
+                    // %lf,%lf,%lf,%lf
+                    // %d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,
+
+                    
+
+                    P[SDcount] = ref_lift_front_posi;
+                    Q[SDcount] = ref_lift_back_posi;
+
+                    R[SDcount] = front_lift_posi;
+                    S[SDcount] = back_lift_posi;
+
+                    f[SDcount] = front_syusoku;
+                    g[SDcount] = back_syusoku;
+
+                    h[SDcount] = stepup_flag;
+                    j[SDcount] = stepup_count;
+                    k[SDcount] = stepdown_flag;
+                    l[SDcount] = stepdown_count;
+
+                    m[SDcount] = kouden1read;
+                    n[SDcount] = kouden3read;
+                    o[SDcount] = air_state;
+
+                    p[SDcount] = limit4read;
+                    q[SDcount] = limit5read;
+
+                    r[SDcount] = autonomous.up_num;
+                    s[SDcount] = autonomous.send_num;
+                    t[SDcount] = autonomous.route_num;
+                    u[SDcount] = route[autonomous.route_num].num;
+
+                    v[SDcount] = cubeIndex;
+                    w[SDcount] = autonomous.direction_flag;
+                    T[SDcount] = autonomous.setx;
+                    U[SDcount] = autonomous.sety;
+                    V[SDcount] = autonomous.setz;
+
+                    W[SDcount] = autonomous.diffx;
+                    X[SDcount] = autonomous.diffy;
+
+                    x[SDcount] = autonomous.khs;
+
+
+
+
+                    // K[SDcount] = pre_angle;
+                    // a[SDcount] = autonomous.phase;
+                    // b[SDcount] = autonomous.getPathNum();
+                    // G[SDcount] = autonomous.get_t_be();
+                    // H1[SDcount] = autonomous.onx();
+                    // I[SDcount] = autonomous.ony();
+                    // J[SDcount] = autonomous.angle();
+                    // L4[SDcount] = autonomous.Px(3);
+                    // N[SDcount] = autonomous.Py(3);
+                    // //   M[SDcount] = autonomous.lim_refVz();
+                    // //   c[SDcount] = autonomous.acc_process();
+                    // d[SDcount] = autonomous.syusoku;
+                    // // e[SDcount] = interval_time;
+                    // e[SDcount] = timer.read_ms();
+
+                    // M[SDcount] = lrtbPosi.y;
+                    // O[SDcount] = lrtbPosi.x;
+                    // P[SDcount] = lrtbPosi.z;
                     
                     
-                    S[SDcount] = vel_lift_back;
-                    T[SDcount] = normalspeed_y;
-                    U[SDcount] = normalspeed_z;
+                    // S[SDcount] = vel_lift_back;
+                    // T[SDcount] = normalspeed_y;
+                    // U[SDcount] = normalspeed_z;
 
-                    V[SDcount] = roboclawCmd0;
-                    R[SDcount] = roboclawCmd1;
-                    W[SDcount] = roboclawCmd2;
+                    // V[SDcount] = roboclawCmd0;
+                    // R[SDcount] = roboclawCmd1;
+                    // W[SDcount] = roboclawCmd2;
 
-                    f[SDcount] = air_up_flag;
-                    g[SDcount] = autonomous.send_num;
-                    h[SDcount] = kouden1read;
-                    j[SDcount] = front_syusoku;
-                    p[SDcount] = kouden3read;
-                    k[SDcount] = back_syusoku;
-                    l[SDcount] = back_wheel_flag;
-                    m[SDcount] = stepup_count;
-                    n[SDcount] = stepdown_count;
-                    // m[SDcount] = overstep_R1_phase;
-                    // n[SDcount] = downstep_R1_phase;
-                    o[SDcount] = hold_phase;
+                    // f[SDcount] = air_up_flag;
+                    // g[SDcount] = autonomous.send_num;
+                    // h[SDcount] = kouden1read;
+                    // j[SDcount] = front_syusoku;
+                    // p[SDcount] = kouden3read;
+                    // k[SDcount] = back_syusoku;
+                    // l[SDcount] = back_wheel_flag;
+                    // m[SDcount] = stepup_count;
+                    // n[SDcount] = stepdown_count;
+                    // // m[SDcount] = overstep_R1_phase;
+                    // // n[SDcount] = downstep_R1_phase;
+                    // o[SDcount] = hold_phase;
 
-                    q[SDcount] = mode;
+                    // q[SDcount] = mode;
 
-                    r[SDcount] = next_box_state;
+                    // r[SDcount] = next_box_state;
 
-                    s[SDcount] = limit4read;
-                    t[SDcount] = limit5read;
-                    u[SDcount] = autonomous.up_num;
+                    // s[SDcount] = limit4read;
+                    // t[SDcount] = limit5read;
+                    // u[SDcount] = autonomous.up_num;
 
-                    // v[SDcount] = autonomous.lift_check;
-                    // r[SDcount] = ControlMode;
+                    // // v[SDcount] = autonomous.lift_check;
+                    // // r[SDcount] = ControlMode;
+                    // // w[SDcount] = back_wheel_flag;
+                    // v[SDcount] = autonomous.route_num;
+                    // r[SDcount] = route[autonomous.route_num].num;
                     // w[SDcount] = back_wheel_flag;
-                    v[SDcount] = autonomous.route_num;
-                    r[SDcount] = route[autonomous.route_num].num;
-                    w[SDcount] = back_wheel_flag;
 
-                    X[SDcount] = autonomous.rotate_radian;
-                    Y[SDcount] = ref_lift_front_posi;
-                    Z[SDcount] = ref_lift_back_posi;
+                    // X[SDcount] = autonomous.rotate_radian;
+                    // Y[SDcount] = ref_lift_front_posi;
+                    // Z[SDcount] = ref_lift_back_posi;
 
-                    Q[SDcount] = front_lift_posi;
-                    G[SDcount] = back_lift_posi;
+                    // Q[SDcount] = front_lift_posi;
+                    // G[SDcount] = back_lift_posi;
 
-                    c[SDcount] = air_state;
+                    // c[SDcount] = air_state;
 
 
                     // gPosi.y,gPosi.x,gPosi.z,refV.y,refV.x,refV.z,pre_angle,autonomous.phase,autonomous.getPathNum(),autonomous.get_t_be(),autonomous.onx(),autonomous.ony(),autonomous.angle(),autonomous.Px(3),autonomous.Py(3),autonomous.syusoku,timer.read_ms(),lrtbPosi.y,lrtbPosi.x,lrtbPosi.z,stepup_count,stepup_flag,stepdown_count,stepdown_flag,front_syusoku,back_syusoku,roboclawCmd0,roboclawCmd1,roboclawCmd2,air_up_flag,autonomous.send_num,kouden1read,kouden2read,kouden3read,cubeIndex,nextIndex,overstep_phase,downstep_phase,hold_phase,mode,next_box_state,limit4read,limit5read,autonomous.up_num,autonomous.route_num,route[autonomous.route_num].num,back_wheel_flag,autonomous.rotate_radian,ref_lift_front_posi,ref_lift_back_posi,front_lift_posi,back_lift_posi/n
@@ -3450,7 +3639,7 @@ sprintf(str,"[INFO]bno on\n");
                 SDcount++;
             }
 
-             if(flag_simu && flag_comm){
+            if(flag_simu && flag_comm){
                 int num = sprintf(sbuf,
                             "%.4lf,%.4lf,%.4lf,Hello World,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%d;%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%d,"
                             "%d,%.4lf,%d,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf\n",
@@ -3490,7 +3679,8 @@ sprintf(str,"[INFO]bno on\n");
         // sprintf(str,"g,%4.4lf,%4.4lf,%4.4lf ", gPosi.x, gPosi.y, gPosi.z);
         // invoke_print(str);
         // // // // //速度指令
-        sprintf(str,"%4.4lf,%4.4lf,%4.4lf phase:%d  %d  %d  %d  %d  %d %d %lf %lf %lf %lf %d %d %lf %d", refV.x, refV.y, refV.z,autonomous.phase,roboclawCmd0,roboclawCmd1,roboclawCmd2,limit8read,limit9read,flag_lift,front_lift_posi,back_lift_posi,ref_lift_front_posi,ref_lift_back_posi,stepup_count,air_state,vel_lift_back,air_state);
+        sprintf(str,"%4.4lf,%4.4lf,%4.4lf phase:%d  %d  %d  %d  %d  %d %d %lf %lf %lf %lf %d %d %lf %d %d", refV.x, refV.y, refV.z,autonomous.phase,roboclawCmd0,roboclawCmd1,roboclawCmd2,limit8read,limit9read,flag_lift,front_lift_posi,back_lift_posi,ref_lift_front_posi,ref_lift_back_posi,stepup_count,air_state,vel_lift_back,air_state,stepup_flag);
+        // sprintf(str,"%lf,%lf,%lf,%lf,%lf,%lf,%d,%d\n",autonomous.forest[route[autonomous.route_num].num].x,autonomous.forest[route[autonomous.route_num].num].y,autonomous.forest[route[autonomous.route_num + 1].num].x,autonomous.forest[route[autonomous.route_num + 1].num].y,autonomous.diffx,autonomous.diffy,autonomous.direction_flag,autonomous.phase);
         invoke_print(str);
 
         // sprintf(str, "%d, %lf, %lf, %d",roboclawCmd2,);
@@ -3692,7 +3882,7 @@ sprintf(str,"[INFO]bno on\n");
         
         send_data[0] = autonomous.send_num;
         send_data[1] = air_state;
-        send_data[2] = KFS_height_state;
+        send_data[2] = autonomous.khs;//KFS_height_state;
         send_data[3] = 3;//also_KFS_hold_num
         send_data[4] = lrtb_check;
         send_data[5] = (int(abs(front_lift_posi)) & 0b000000111111);

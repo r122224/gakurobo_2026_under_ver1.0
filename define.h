@@ -10,11 +10,12 @@
 #define BLUE 1
 #define COLLECT_NUM 4
 
-#define front_lift_init 419.48
-#define back_lift_init  204.91
+#define front_lift_init 419.48//397.751118//0//419.48
+#define back_lift_init  204.91//196.002715//0//204.91
+// -397.751118 -196.002715
 
 #define HIGH_COLLECT_POSI   222.48
-#define LOW_COLLECT_POSI     22.48
+#define LOW_COLLECT_POSI     40//22.48
 #define STORAGE_POSI         92.48
 
 #define STEP_UP_FRONT_HIGH     240
@@ -27,8 +28,8 @@
 #define STEP_DOWN_BACK_HIGH    230
 #define STEP_DOWN_BACK_LOW     -30
 
-#define FRONT_INIT          419.48
-#define BACK_INIT           204.91
+#define FRONT_INIT          0//419.48
+#define BACK_INIT           0//204.91
 
 #define EDGE_MOVE 0.308
 
