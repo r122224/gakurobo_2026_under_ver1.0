@@ -32,6 +32,7 @@
 #include <iterator>
 #include <math.h>
 #include <string>
+#include <tuple>
 
 #include "UDPSocketComm.h"
 
@@ -72,12 +73,18 @@
 //     {14,1},
 //     {16,2}
 // };
-forest_route route[9] = {
-    {2,2},
-    {5,2},
-    {8,2},
-    {11,2},
-    {14,2},
+forest_route route[15] = {
+    {1,2},
+    {4,2},
+    {5,1},
+    {7,2},
+    {6,1},
+    {10,2},
+    {13,2},
+    {12,1},
+    {16,2},
+    {17,2},
+    {17,2},
     {17,2},
     {17,2},
     {17,2},
@@ -350,7 +357,7 @@ int field_s = RED;
 //SDカード
 mySDclass mySD;
 int SDcount = 0;
-int a[30000], b[30000], c[30000], d[30000], e[30000], f[30000], g[30000], h[30000], i_[30000], j[30000], k[30000], l[30000], m[30000], n[30000], o[30000], p[30000], q[30000], r[30000], s[30000],t[30000],u[30000],v[30000],w[30000],x[30000],y[30000],z[30000];
+int a[30000], b[30000], c[30000], d[30000], e[30000], f[30000], g[30000], h[30000], i_[30000], j[30000], k[30000], l[30000], m[30000], n[30000], o[30000], p[30000], q[30000], r[30000], s[30000],t[30000],u[30000],v[30000],w[30000],x[30000],y[30000],z[30000],a1[30000];
 double A[30000], B[30000], C[30000], D[30000], E[30000], F[30000], G[30000],
     H1[30000], I[30000], J[30000], K[30000], L4[30000], N[30000], M[30000], O[30000],P[30000],Q[30000],R[30000],S[30000],T[30000],U[30000],V[30000],W[30000],X[30000],Y[30000],Z[30000],Y1[30000],Z1[30000],O1[30000],O2[30000],O3[30000],O4[30000];
 char str[255];
@@ -864,6 +871,7 @@ int spear_rack_true[6] =  {0,0,0,0,0,0};//手前が0
 
 Ticker flipper;            // void timer_warikomi() 用
 Timer timer;               //経過時間確認用
+Timer t1;
 bool flag_int = false; // 15msごとにtrueになる
 bool flag_print = false;  
 bool flag_100ms = false;
@@ -884,6 +892,8 @@ int count_time[10];
 
 int path = 0;
 
+int tttt = 0;
+
 //関数---------------------------------------------------------------
 void timer_warikomi(){
     static int timer_count = 1;
@@ -899,6 +909,11 @@ void timer_warikomi(){
     
     // if(!flag_int){
     if(1){
+        tttt = timer.read_us();
+        timer.reset();
+        // interval_sum += interval_time;
+        // printf("time:%d  \n",interval_time);
+        // pc.printf("%d",timer.read_ms());
         flag_int = true;
         flag_con_tuusin = true;
         flag_limitcomm = true;
@@ -1797,14 +1812,16 @@ sprintf(str,"[INFO]bno on\n");
     sprintf(str,"[INFO] program start!\n");
     invoke_print(str);
 
-    // autonomous.route_num = 2;
-    // autonomous.phase = 215;
+    // autonomous.route_num = 1;
+    // autonomous.phase = 202;
+    // mode = MODE_FOREST;
 
 //割り込み処理の開始
   flipper.attach(&timer_warikomi, INT_TIME);
   sprintf(str,"[INFO] set timer_warikomi\n");
   invoke_print(str);
   timer.start();
+  t1.start();
 //   con.update();
 
   //**********************↓loop()↓**********************************************//
@@ -1901,11 +1918,11 @@ sprintf(str,"[INFO]bno on\n");
     // }
 
     if (flag_int) {//INT_TIME毎に処理される．フラグ処理
-        // interval_time = timer.read_ms();
-        // timer.reset();
-        interval_sum += interval_time;
+        // interval_time = t1.read_us();
+        // t1.reset();
+        // interval_sum += interval_time;
         // printf("time:%d  \n",interval_time);
-        // sprintf(str,"time:%d  \n",userButton.read());
+        // printf("time:%d  \n",tttt);
         // invoke_print(str);
 
         up = con.update();
@@ -2211,23 +2228,23 @@ sprintf(str,"[INFO]bno on\n");
             }
 
     //simuボタン------------------------------------------------------------------------------------
-        if(flag_simu){
-            if(receiveData_maicon()){
-                if (readButton(SIMU_BUTTON_RIGHT) == -1) {
-                    nextPhase = PUSH_BUTTON;
-                    ControlMode = AUTO_MODE;
-                }else if (readButton(SIMU_BUTTON_LEFT) == -1) {
-                    ControlMode = MANUAL_MODE;
-                }
-                if (readButton(SIMU_BUTTON_UP) == -1) {
-                    autonomous.collect_count++;
-                }
-                if (readButton(SIMU_BUTTON_DOWN) == -1) {
-                    autonomous.collect_count--;
-                }
-                flag_comm = true;
-            }
-        }
+        // if(flag_simu){
+        //     if(receiveData_maicon()){
+        //         if (readButton(SIMU_BUTTON_RIGHT) == -1) {
+        //             nextPhase = PUSH_BUTTON;
+        //             ControlMode = AUTO_MODE;
+        //         }else if (readButton(SIMU_BUTTON_LEFT) == -1) {
+        //             ControlMode = MANUAL_MODE;
+        //         }
+        //         if (readButton(SIMU_BUTTON_UP) == -1) {
+        //             autonomous.collect_count++;
+        //         }
+        //         if (readButton(SIMU_BUTTON_DOWN) == -1) {
+        //             autonomous.collect_count--;
+        //         }
+        //         flag_comm = true;
+        //     }
+        // }
 
         //SDカード--------------------------------------------------------------------------------
         if(flag_SDwrite && LED_SDwrite){//SDカード書き込み
@@ -2242,7 +2259,7 @@ sprintf(str,"[INFO]bno on\n");
             // sprintf(str, "time,phase,syusoku,gPosi.y,gPosi.x,gPosi.z,,refV.y,refV.x,refV.z,,lrtb.y,lrtb.x,lrtb.z,Py,Px,,send_num,air,kouden1,front_syusoku,kouden3,back_syusoku,back_wheel_flag, stepup_count, stepdown_count, holdstep,,cmd0,cmd1,cmd2,,mode,nbox,,limit,,up,lift,c_M,back,rad,ref, ,\n");
             sprintf(str, "time,,gPosi.y,gPosi.x,gPosi.z,refV.y,refV.x,refV.z,,phase,getPathNum,get_t_be,onx,ony,angle,Px(3),Py(3),,lrtbPosi.y,lrtbPosi.x,lrtbPosi.z,,roboclawCmd0,roboclawCmd1,roboclawCmd2,ref_lift_front_posi,ref_lift_back_posi,front_lift_posi,");
             mySD.write_logdata(str);
-            sprintf(str, "back_lift_posi,,front_syusoku,back_syusoku,stepup_flag,stepup_count,stepdown_flag,stepdown_count,kouden1read,kouden3read,air_state,limit4read,limit5read,up_num,send_num,route_num,route[autonomous.route_num].num,,cubeIndex,direction_flag,setx,sety,setz,,cubeIndex\n");
+            sprintf(str, "back_lift_posi,,front_syusoku,back_syusoku,stepup_flag,stepup_count,stepdown_flag,stepdown_count,kouden1read,kouden2read,kouden3read,air_state,limit4read,limit5read,up_num,send_num,route_num,route[autonomous.route_num].num,,cubeIndex,direction_flag,setx,sety,setz,,cubeIndex\n");
             mySD.write_logdata(str);
             // sprintf(str, "gPosi.y,gPosi.x,gPosi.z,refV.y,refV.x,refV.z,pre_angle,autonomous.phase,autonomous.getPathNum(),autonomous.get_t_be(),autonomous.onx(),autonomous.ony(),autonomous.angle()");
             // mySD.write_logdata(str);
@@ -2265,7 +2282,7 @@ sprintf(str,"[INFO]bno on\n");
                 // sprintf(str,"%d,%d,%d,%lf,%lf,%lf,,%lf,%lf,%lf,,%lf,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%lf,%lf,%lf,,%d,%d,,%d,%d,%d,%d,%d,%d,%lf,%lf,%lf ,%lf,%lf ,%lf ,%d\n",e[i], a[i], d[i], A[i], B[i], C[i], D[i], E[i], F[i], M[i], O[i], P[i], N[i], L4[i], g[i], f[i], h[i], j[i], p[i], k[i], l[i], m[i], n[i], o[i], V[i], R[i], W[i],q[i], r[i],s[i],t[i],u[i],v[i],r[i],w[i],X[i],Y[i],Z[i],Q[i],G[i],T[i],c[i]);
                 // sprintf(str,"%d,,%lf,%lf,%lf,%lf,%lf,%lf,,%d,%d,%lf,%lf,%lf,%lf,%lf,%lf,,%lf,%lf,%lf,,%d,%d,%d,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%d,%d,%lf,%lf,%lf,%d,%d\n",z[i],A[i],B[i],C[i],D[i],E[i],F[i],a[i],b[i],G[i],H1[i],I[i],J[i],K[i],L4[i],M[i],N[i],O[i],c[i],d[i],e[i],P[i],Q[i],R[i],S[i],f[i],g[i],h[i],j[i],k[i],l[i],m[i],n[i],o[i],p[i],q[i],r[i],s[i],t[i],u[i],v[i],w[i],T[i],U[i],V[i],W[i],X[i],x[i],y[i]);
                 // mySD.write_logdata(str);
-                sprintf(str,"%d,,%lf,%lf,%lf,%lf,%lf,%lf,,%d,%d,%lf,%lf,%lf,%lf,%lf,%lf,,%lf,%lf,%lf,,%d,%d,%d,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%d,%d,%lf,%lf,%lf,%d,%d\n",z[i],A[i],B[i],C[i],D[i],E[i],F[i],a[i],b[i],G[i],H1[i],I[i],J[i],K[i],L4[i],M[i],N[i],O[i],c[i],d[i],e[i],P[i],Q[i],R[i],S[i],f[i],g[i],h[i],j[i],k[i],l[i],m[i],n[i],o[i],p[i],q[i],r[i],s[i],t[i],u[i],v[i],w[i],T[i],U[i],V[i],W[i],X[i],x[i],y[i]);
+                sprintf(str,"%d,,%lf,%lf,%lf,%lf,%lf,%lf,,%d,%d,%lf,%lf,%lf,%lf,%lf,%lf,,%lf,%lf,%lf,,%d,%d,%d,%lf,%lf,%lf,%lf,,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,,%d,%d,%lf,%lf,%lf,%d,%d\n",z[i],A[i],B[i],C[i],D[i],E[i],F[i],a[i],b[i],G[i],H1[i],I[i],J[i],K[i],L4[i],M[i],N[i],O[i],c[i],d[i],e[i],P[i],Q[i],R[i],S[i],f[i],g[i],h[i],j[i],k[i],l[i],m[i],a1[i],n[i],o[i],p[i],q[i],r[i],s[i],t[i],u[i],v[i],w[i],T[i],U[i],V[i],W[i],X[i],x[i],y[i]);
                 mySD.write_logdata(str);
                 i++;
             }
@@ -2309,6 +2326,7 @@ sprintf(str,"[INFO]bno on\n");
 
         //自己位置--------------------------------------------------------------------------
         if(!flag_simu){
+        // if(false){
             //機構自己位置----------------------------------------------------------------
             static bool first_count = false;
             //現在の中心回転軸位置読み取り用
@@ -2345,7 +2363,7 @@ sprintf(str,"[INFO]bno on\n");
                 
                 for(int i = 11; i >= 0; i--){
                     limitdata[i] = lim.sensorData[i];
-                    pc.printf("%d ",lim.sensorData[i]);
+                    // pc.printf("%d ",lim.sensorData[i]);
                 }
                 flag_limitcomm = false;
             }
@@ -2551,64 +2569,174 @@ sprintf(str,"[INFO]bno on\n");
                     autonomous.button_true_Fake[i] = obj_true_Fake[i];
                 }
             }
-            
+
             cubeIndex = change_num[route[autonomous.route_num].num];
 
             if(mode == MODE_FOREST){
+                switch (route[autonomous.route_num].num) {
+                    case 0:
+                        flag_use_front = true;
+                        flag_use_in = false;
+                        flag_use_out = false;
+                        flag_use_back = false;
+                    break;
+                    case 1:
+                        flag_use_front = true;
+                        flag_use_in = false;
+                        flag_use_out = false;
+                        flag_use_back = false;
+                    break;
+                    case 2:
+                        flag_use_front = true;
+                        flag_use_in = false;
+                        flag_use_out = false;
+                        flag_use_back = false;
+                    break;
+                    case 3:
+                        flag_use_front = true;
+                        flag_use_in = false;
+                        flag_use_out = false;
+                        flag_use_back = false;
+                    break;
+                    case 4:
+                        flag_use_front = true;
+                        flag_use_in = true;
+                        flag_use_out = false;
+                        flag_use_back = false;
+                    break;
+                    case 5:
+                        flag_use_front = false;
+                        flag_use_in = false;
+                        flag_use_out = false;
+                        flag_use_back = false;
+                    break;
+                    case 6:
+                        flag_use_front = false;
+                        flag_use_in = false;
+                        flag_use_out = false;
+                        flag_use_back = false;
+                    break;
+                    case 7:
+                        flag_use_front = true;
+                        flag_use_in = true;
+                        flag_use_out = false;
+                        flag_use_back = false;
+                    break;
+                    case 8:
+                        flag_use_front = true;
+                        flag_use_in = true;
+                        flag_use_out = false;
+                        flag_use_back = true;
+                    break;
+                    case 9:
+                        flag_use_front = false;
+                        flag_use_in = false;
+                        flag_use_out = true;
+                        flag_use_back = true;
+                    break;
+                    case 10:
+                        flag_use_front = false;
+                        flag_use_in = false;
+                        flag_use_out = false;
+                        flag_use_back = false;
+                    break;
+                    case 11:
+                        flag_use_front = false;
+                        flag_use_in = true;
+                        flag_use_out = false;
+                        flag_use_back = false;
+                    break;
+                    case 12:
+                        flag_use_front = false;
+                        flag_use_in = false;
+                        flag_use_out = true;
+                        flag_use_back = true;
+                    break;
+                    case 13:
+                        flag_use_front = false;
+                        flag_use_in = false;
+                        flag_use_out = true;
+                        flag_use_back = false;
+                    break;
+                    case 14:
+                        flag_use_front = false;
+                        flag_use_in = true;
+                        flag_use_out = false;
+                        flag_use_back = false;
+                    break;
+                    case 15:
+                        flag_use_front = false;
+                        flag_use_in = false;
+                        flag_use_out = false;
+                        flag_use_back = false;
+                    break;
+                    case 16:
+                        flag_use_front = false;
+                        flag_use_in = false;
+                        flag_use_out = false;
+                        flag_use_back = false;
+                    break;
+                    case 17:
+                        flag_use_front = false;
+                        flag_use_in = false;
+                        flag_use_out = false;
+                        flag_use_back = false;
+                    break;
+                }
                 //使える壁（旋回の時，前か後）----------------------------------
-                if(cubeIndex == 10 || cubeIndex == 11 || cubeIndex == 12 || cubeIndex == 13 || cubeIndex == 15 || cubeIndex == 17){
-                    flag_use_front = true;
-                }else{
-                    flag_use_front = false;
-                }
-                if(cubeIndex == 5 || cubeIndex == 8 || cubeIndex == 10 || cubeIndex == 11 || cubeIndex == 13){//cubeIndex == 15
-                    flag_use_in = true;
-                }else{
-                    flag_use_in = false;
-                }
-                if(cubeIndex == 3 || cubeIndex == 6 ){//|| cubeIndex == 13 -> 内側だけにする．cubeIndex == 17
-                    flag_use_out = true;
-                }else{
-                    flag_use_out = false;
-                }
-                if(cubeIndex == 3 || cubeIndex == 4 || cubeIndex == 5 || cubeIndex == 6 || cubeIndex == 0 || cubeIndex == 1 || cubeIndex == 2){//|| cubeIndex == 11⇒前だけにする
-                    flag_use_back = true;
-                }else{
-                    flag_use_back = false;
-                }
-                if(cubeIndex == 7 || cubeIndex == 9 || cubeIndex == 14){
-                    flag_use_front = false;
-                    flag_use_in = false;
-                    flag_use_out = false;
-                    flag_use_back = false;
-                }
-                //次のマスのlrtb可能不可-------------------------------
-                if(nextIndex == 10 || nextIndex == 11 || nextIndex == 12 || nextIndex == 13 || nextIndex == 15 || nextIndex == 17){
-                    flag_use_front_next = true;
-                }else{
-                    flag_use_front_next = false;
-                }
-                if(nextIndex == 5 || nextIndex == 8 || nextIndex == 10 || nextIndex == 11 || nextIndex == 13){
-                    flag_use_in_next = true;
-                }else{
-                    flag_use_in_next = false;
-                }
-                if(nextIndex == 3 || nextIndex == 6 ){//|| nextIndex == 13 -> 内側だけにする．
-                    flag_use_out_next = true;
-                }else{
-                    flag_use_out_next = false;
-                }
-                if(nextIndex == 3 || nextIndex == 4 || nextIndex == 5 || nextIndex == 6 || nextIndex == 0 || nextIndex == 1 || nextIndex == 2){//|| nextIndex == 11⇒前だけにする
-                    flag_use_back_next = true;
-                }else{
-                    flag_use_back_next = false;
-                }
-                if(nextIndex == 7 || nextIndex == 9 || nextIndex == 14){
-                    flag_use_front_next = false;
-                    flag_use_in_next = false;
-                    flag_use_out_next = false;
-                    flag_use_back_next = false;
-                }
+                // if(cubeIndex == 10 || cubeIndex == 11 || cubeIndex == 12 || cubeIndex == 13 || cubeIndex == 15 || cubeIndex == 17){
+                //     flag_use_front = true;
+                // }else{
+                //     flag_use_front = false;
+                // }
+                // if(cubeIndex == 5 || cubeIndex == 8 || cubeIndex == 10 || cubeIndex == 11 || cubeIndex == 13){//cubeIndex == 15
+                //     flag_use_in = true;
+                // }else{
+                //     flag_use_in = false;
+                // }
+                // if(cubeIndex == 3 || cubeIndex == 6 ){//|| cubeIndex == 13 -> 内側だけにする．cubeIndex == 17
+                //     flag_use_out = true;
+                // }else{
+                //     flag_use_out = false;
+                // }
+                // if(cubeIndex == 3 || cubeIndex == 4 || cubeIndex == 5 || cubeIndex == 6 || cubeIndex == 0 || cubeIndex == 1 || cubeIndex == 2){//|| cubeIndex == 11⇒前だけにする
+                //     flag_use_back = true;
+                // }else{
+                //     flag_use_back = false;
+                // }
+                // if(cubeIndex == 7 || cubeIndex == 9 || cubeIndex == 14){
+                //     flag_use_front = false;
+                //     flag_use_in = false;
+                //     flag_use_out = false;
+                //     flag_use_back = false;
+                // }
+                // //次のマスのlrtb可能不可-------------------------------
+                // if(nextIndex == 10 || nextIndex == 11 || nextIndex == 12 || nextIndex == 13 || nextIndex == 15 || nextIndex == 17){
+                //     flag_use_front_next = true;
+                // }else{
+                //     flag_use_front_next = false;
+                // }
+                // if(nextIndex == 5 || nextIndex == 8 || nextIndex == 10 || nextIndex == 11 || nextIndex == 13){
+                //     flag_use_in_next = true;
+                // }else{
+                //     flag_use_in_next = false;
+                // }
+                // if(nextIndex == 3 || nextIndex == 6 ){//|| nextIndex == 13 -> 内側だけにする．
+                //     flag_use_out_next = true;
+                // }else{
+                //     flag_use_out_next = false;
+                // }
+                // if(nextIndex == 3 || nextIndex == 4 || nextIndex == 5 || nextIndex == 6 || nextIndex == 0 || nextIndex == 1 || nextIndex == 2){//|| nextIndex == 11⇒前だけにする
+                //     flag_use_back_next = true;
+                // }else{
+                //     flag_use_back_next = false;
+                // }
+                // if(nextIndex == 7 || nextIndex == 9 || nextIndex == 14){
+                //     flag_use_front_next = false;
+                //     flag_use_in_next = false;
+                //     flag_use_out_next = false;
+                //     flag_use_back_next = false;
+                // }
             }else{
                 flag_use_front = false;
                 flag_use_in = false;
@@ -2624,6 +2752,7 @@ sprintf(str,"[INFO]bno on\n");
             // }
             //LRTB-----------------------------------------------------------
             if(lrtb_comm && lrtb.update()){
+            // if(false){
                 lrtb_0 = lrtb.sensorData[1];//　前（機体から見て）
                 lrtb_1 = lrtb.sensorData[0];//　左
                 lrtb_2 = lrtb.sensorData[3];//　右
@@ -2733,6 +2862,9 @@ sprintf(str,"[INFO]bno on\n");
                 // flag_lrtb_diff_x = (fabs(gPosi.x - lrtbPosi.x) < lrtb_diff_limit)? true : false;
                 // flag_lrtb_diff_y = (fabs(gPosi.y - lrtbPosi.y) < lrtb_diff_limit)? true : false;
 
+/////////////////////////////////////////////
+
+
                 //lrtbによる自己位置
                 // if(field_s == RED){//青フィールド
                 if(mode == MODE_ZONE1){//ゾーン1，phase 事に変更
@@ -2779,7 +2911,7 @@ sprintf(str,"[INFO]bno on\n");
                         if(autonomous.phase == 62){
                             lrtbPosi.x = 12.0 - distance_front;
                             if(fabs(gPosi.x - lrtbPosi.x) < lrtb_diff_limit){
-                                platform.setAxisPosi(lrtbPosi.x, POSIX);
+                                getPosi.x = platform.setAxisPosi(lrtbPosi.x, POSIX);
                             }
                         }
                     }else if(flag_lrtb_back){
@@ -2788,7 +2920,7 @@ sprintf(str,"[INFO]bno on\n");
                         if(autonomous.phase == 62){
                             lrtbPosi.y = distance_in + 0.25 - 0.025;//ラックを見る
                             if(fabs(gPosi.y - lrtbPosi.y) < lrtb_diff_limit){
-                                platform.setAxisPosi(lrtbPosi.y, POSIY);
+                                getPosi.y = platform.setAxisPosi(lrtbPosi.y, POSIY);
                             }
                         }
                     }else if(flag_lrtb_out){
@@ -2805,29 +2937,29 @@ sprintf(str,"[INFO]bno on\n");
 
                     }
 
-                    if(autonomous.phase == 202){//旋回前に自己位置の補正
+                    if(autonomous.phase == 212 || autonomous.phase == 214 || autonomous.phase == 224 || autonomous.phase == 226  || autonomous.phase == 232 || autonomous.phase == 2351 || autonomous.phase == 237){//旋回前に自己位置の補正
                         // if(next_box_state == 0){
                             if(flag_use_front && flag_lrtb_front){
-                                // lrtbPosi.x = forest_Posi[cubeIndex].front - distance_front;
+                                lrtbPosi.x = forest_Posi[cubeIndex].front - distance_front;
                                 if(cubeIndex == 16 && obj_state_test[10] == 0){
                                     // lrtbPosi.x = forest_Posi[13].front - distance_front;
                                 }
-                                platform.setAxisPosi(lrtbPosi.x, POSIX);
+                                getPosi.x = platform.setAxisPosi(lrtbPosi.x, POSIX);
                             }
                             if(flag_use_back && flag_lrtb_back){
-                                // lrtbPosi.x = forest_Posi[cubeIndex].back + distance_back;
-                                platform.setAxisPosi(lrtbPosi.x, POSIX);
+                                lrtbPosi.x = forest_Posi[cubeIndex].back + distance_back;
+                                getPosi.x = platform.setAxisPosi(lrtbPosi.x, POSIX);
                             }
                             if(flag_use_in && flag_lrtb_in){
                                 // lrtbPosi.y = forest_Posi[cubeIndex].left + distance_in;
                                 if(cubeIndex == 15){
                                     lrtbPosi.y = distance_in;
                                     if(fabs(gPosi.y - lrtbPosi.y) < lrtb_diff_limit){
-                                        platform.setAxisPosi(lrtbPosi.y, POSIY);
+                                        getPosi.y = platform.setAxisPosi(lrtbPosi.y, POSIY);
                                     }
                                 }else{
                                     lrtbPosi.y = forest_Posi[cubeIndex].left + distance_in;
-                                    platform.setAxisPosi(lrtbPosi.y, POSIY);
+                                    getPosi.y = platform.setAxisPosi(lrtbPosi.y, POSIY);
                                 }
                             }
                             if(flag_use_out && flag_lrtb_out){
@@ -2835,17 +2967,19 @@ sprintf(str,"[INFO]bno on\n");
                                 if(cubeIndex == 17){
                                     lrtbPosi.y = 6.0 - distance_out;
                                     if(fabs(gPosi.y - lrtbPosi.y) < lrtb_diff_limit){
-                                        platform.setAxisPosi(lrtbPosi.y, POSIY);
+                                        getPosi.y = platform.setAxisPosi(lrtbPosi.y, POSIY);
                                     }
                                 }else{
                                     lrtbPosi.y = forest_Posi[cubeIndex].right - distance_out;
-                                    platform.setAxisPosi(lrtbPosi.y, POSIY);
+                                    getPosi.y = platform.setAxisPosi(lrtbPosi.y, POSIY);
                                 }
                             }
                         // }
                         // platform.setPosi(coords {gPosi.x, 0.15 + 0.365 - 0.025 , INIT_Z});
                     }
                 }
+                // lrtbPosi.x = forest_Posi[cubeIndex].front - distance_front;
+                // getPosi.x = platform.setAxisPosi(lrtbPosi.x, POSIX);
                 // }else if(field_s == BLUE){//赤フィールド  
 
                 // }
@@ -2883,15 +3017,25 @@ sprintf(str,"[INFO]bno on\n");
                         lrtbPosi.x = distance_back;
                         lrtbPosi.y = distance_in + 0.15 - 0.025;
                         platform.setPosi(coords {lrtbPosi.x, lrtbPosi.y, RETRY_F_Z});
+                        // platform.setPosi(coords {3.0, 1.8, RETRY_F_Z});
+                        // printf("HH");
                     }else {
                         lrtbPosi.x = distance_back;
                         // lrtbPosi.y = distance_in;
                         platform.setAxisPosi(lrtbPosi.x, POSIX);
                     }   
                 }
+
+                // if(autonomous.phase == 200){
+                //     platform.setPosi(coords {2.0, 1.8, RETRY_F_Z});
+                //     printf("HH\n\n\n");
+                // }
+
+                //////////////////
             }
 
-
+            ///////////////////
+            
             //limitスイッチ自己位置補正
             if(autonomous.phase == 101 && !limit2read && !limit3read){
                 // if(!(autonomous.tar_posi_rack_x = autonomous.spear_posi_x[0]) ||  !(autonomous.tar_posi_rack_x = autonomous.spear_posi_x[5])){
@@ -2923,19 +3067,19 @@ sprintf(str,"[INFO]bno on\n");
 
                 switch (autonomous.direction_flag) {
                     case DFRONT:
-                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x + 0.31;
+                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x + 0.313;
                         platform.setAxisPosi(setPosi.x, POSIX);
                     break;
                     case DRIGHT:
-                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y + 0.31;
+                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y + 0.313;
                         platform.setAxisPosi(setPosi.y, POSIY);
                     break;
                     case DLEFT:
-                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y - 0.31;
+                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y - 0.313;
                         platform.setAxisPosi(setPosi.y, POSIY);
                     break;
                     case DBACK:
-                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x - 0.31;
+                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x - 0.313;
                         platform.setAxisPosi(setPosi.x, POSIX);
                     break;
                 }
@@ -2945,19 +3089,19 @@ sprintf(str,"[INFO]bno on\n");
                 // platform.setPosi(coords {gPosi.x, gPosi.y, 0.0});
                 switch (autonomous.direction_flag) {
                     case DFRONT:
-                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x + 0.31;
+                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x + 0.308;
                         platform.setAxisPosi(setPosi.x, POSIX);
                     break;
                     case DRIGHT:
-                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y + 0.31;
+                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y + 0.308;
                         platform.setAxisPosi(setPosi.y, POSIY);
                     break;
                     case DLEFT:
-                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y - 0.31;
+                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y - 0.308;
                         platform.setAxisPosi(setPosi.y, POSIY);
                     break;
                     case DBACK:
-                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x - 0.31;
+                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x - 0.308;
                         platform.setAxisPosi(setPosi.x, POSIX);
                     break;
                 }
@@ -2968,32 +3112,35 @@ sprintf(str,"[INFO]bno on\n");
             //     platform.setPosi(coords {gPosi.x, 3.0, 1.0});
             // }
 
-            if((autonomous.phase == 2225 || autonomous.phase == 2236)&& pre_kouden3read == 1 && kouden3read == 0){
-                switch (autonomous.direction_flag) {
-                    case DFRONT:
-                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x + 0.865;
-                        platform.setAxisPosi(setPosi.x, POSIX);
-                    break;
-                    case DRIGHT:
-                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y + 0.865;
-                        platform.setAxisPosi(setPosi.y, POSIY);
-                    break;
-                    case DLEFT:
-                        setPosi.y = autonomous.forest[route[autonomous.route_num].num].y - 0.865;
-                        platform.setAxisPosi(setPosi.y, POSIY);
-                    break;
-                    case DBACK:
-                        setPosi.x = autonomous.forest[route[autonomous.route_num].num].x - 0.865;
-                        platform.setAxisPosi(setPosi.x, POSIX);
-                    break;
-                }
-            }
-                
+            //段越え段降り中
+            // if((autonomous.phase == 2225 || autonomous.phase == 2236)&& pre_kouden3read == 1 && kouden3read == 0 ){
+            //     switch (autonomous.direction_flag) {
+            //         case DFRONT:
+            //             setPosi.x = autonomous.forest[route[autonomous.route_num].num].x + 0.797;
+            //             platform.setAxisPosi(setPosi.x, POSIX);
+            //         break;
+            //         case DRIGHT:
+            //             setPosi.y = autonomous.forest[route[autonomous.route_num].num].y + 0.797;
+            //             platform.setAxisPosi(setPosi.y, POSIY);
+            //         break;
+            //         case DLEFT:
+            //             setPosi.y = autonomous.forest[route[autonomous.route_num].num].y - 0.797;
+            //             platform.setAxisPosi(setPosi.y, POSIY);
+            //         break;
+            //         case DBACK:
+            //             setPosi.x = autonomous.forest[route[autonomous.route_num].num].x - 0.797;
+            //             platform.setAxisPosi(setPosi.x, POSIX);
+            //         break;
+            //     }
+            // }
 
+////////////////////////////////////////
             
 
             //最終的な自己位置---------------------------------------------------------
+            // pc.printf("get: %lf, %lf, %lf\t",getPosi.x,getPosi.y,getPosi.z);
             gPosi = getPosi;
+            // pc.printf("g: %lf, %lf, %lf\t",gPosi.x,gPosi.y,gPosi.z);
             //前の値に今の値を格納
             pre_get_cam1_pitch_count = get_cam1_pitch_count;
             pre_get_cam1_yaw_count = get_cam1_yaw_count;
@@ -3001,6 +3148,7 @@ sprintf(str,"[INFO]bno on\n");
             pre_get_cam2_yaw_count = get_cam2_yaw_count;
             pre_get_lift_front_count = get_lift_front_count;
             pre_get_lift_back_count = get_lift_back_count;
+            
         }
 
         // autonomous.route_num = 2;
@@ -3055,19 +3203,49 @@ sprintf(str,"[INFO]bno on\n");
                 }
                 //212,232,224
                 if(autonomous.phase == 212){
-                    if(pre_kouden1read == 1 && kouden1read == 0)
+                    if(pre_kouden1read == 1 && kouden1read == 0 && front_syusoku == true)
                         autonomous.phase = 213;
                     if(!limit4read && !limit5read)
                         autonomous.phase = 213;
                 }
                 if(autonomous.phase == 232){
-                    if(pre_kouden1read == 1 && kouden1read == 0)
+                    if(pre_kouden1read == 1 && kouden1read == 0 && front_syusoku == true)
                         autonomous.phase = 233;
                     if(!limit4read && !limit5read)
                         autonomous.phase = 233;
                 }
+                if(autonomous.phase == 2351){
+                    if(pre_kouden1read == 1 && kouden1read == 0 && front_syusoku == true)
+                        autonomous.phase = 235;
+                    if(!limit4read && !limit5read)
+                        autonomous.phase = 235;
+                }
                 if(autonomous.phase == 224){
-                    if(pre_kouden1read == 1 && kouden1read == 0)
+                    if(pre_kouden1read == 1 && kouden1read == 0 && front_syusoku == true)
+                        autonomous.phase = 2225;
+                    if(!limit4read && !limit5read)
+                        autonomous.phase = 2225;
+                }
+                if(autonomous.phase == 212){
+                    if(pre_kouden1read == 0 && kouden1read == 1 && front_syusoku == true)
+                        autonomous.phase = 213;
+                    if(!limit4read && !limit5read)
+                        autonomous.phase = 213;
+                }
+                if(autonomous.phase == 232){
+                    if(pre_kouden1read == 0 && kouden1read == 1 && front_syusoku == true )
+                        autonomous.phase = 233;
+                    if(!limit4read && !limit5read)
+                        autonomous.phase = 233;
+                }
+                if(autonomous.phase == 2351){
+                    if(pre_kouden1read == 0 && kouden1read == 1 && front_syusoku == true)
+                        autonomous.phase = 235;
+                    if(!limit4read && !limit5read)
+                        autonomous.phase = 235;
+                }
+                if(autonomous.phase == 224){
+                    if(pre_kouden1read == 0 && kouden1read == 1 && front_syusoku == true)
                         autonomous.phase = 2225;
                     if(!limit4read && !limit5read)
                         autonomous.phase = 2225;
@@ -3116,6 +3294,24 @@ sprintf(str,"[INFO]bno on\n");
                     ref_lift_front_posi = STORAGE_POSI;
                     autonomous.set_front_posi = STORAGE_POSI;
                     ref_lift_back_posi = STEP_UP_BACK_HIGH;
+                    switch (autonomous.direction_flag) {
+                        case DFRONT:
+                            setPosi.x = autonomous.forest[route[autonomous.route_num].num].x + 0.889;
+                            getPosi.x = platform.setAxisPosi(setPosi.x, POSIX);
+                        break;
+                        case DRIGHT:
+                            setPosi.y = autonomous.forest[route[autonomous.route_num].num].y + 0.889;
+                            getPosi.y = platform.setAxisPosi(setPosi.y, POSIY);
+                        break;
+                        case DLEFT:
+                            setPosi.y = autonomous.forest[route[autonomous.route_num].num].y - 0.889;
+                            getPosi.y = platform.setAxisPosi(setPosi.y, POSIY);
+                        break;
+                        case DBACK:
+                            setPosi.x = autonomous.forest[route[autonomous.route_num].num].x - 0.889;
+                            getPosi.x = platform.setAxisPosi(setPosi.x, POSIX);
+                        break;
+                    }
                     if(back_syusoku == 1 && front_syusoku == 1){
                         stepup_count = 0;
                         stepup_flag = false;
@@ -3171,7 +3367,7 @@ sprintf(str,"[INFO]bno on\n");
                     air_state = true;
                     air_up_flag = true;
                     refV.x = 0.3;
-                    if(pre_kouden3read == 0 && kouden3read == 1){//止める
+                    if(pre_kouden2read == 0 && kouden2read == 1){//止める
                         vel_lift_back = 0.00;
                         ControlMode = AUTO_MODE;
                         autostep_mode = false;
@@ -3186,8 +3382,10 @@ sprintf(str,"[INFO]bno on\n");
                     }
                 break;
                 case 3://機体下げる
-                    ref_lift_front_posi = STEP_DOWN_FRONT_HIGH;
                     ref_lift_back_posi = STEP_DOWN_BACK_HIGH;
+                    ref_lift_front_posi = STORAGE_POSI;
+                    autonomous.set_front_posi = STORAGE_POSI;
+                    autonomous.set_back_posi = STEP_DOWN_BACK_HIGH;
                     if(back_syusoku == 1 && front_syusoku == 1){
                         stepdown_count = 0;
                         stepdown_flag = false;
@@ -3344,7 +3542,7 @@ sprintf(str,"[INFO]bno on\n");
         if(autonomous.phase == 0){
             autonomous.send_num = 0;
         }
-        if(autonomous.phase == 7){
+        if(autonomous.phase == 200){
             mode = MODE_FOREST;
         }else if(autonomous.phase == 60 || autonomous.phase == 62){
             mode = MODE_ZONE3;
@@ -3411,6 +3609,7 @@ sprintf(str,"[INFO]bno on\n");
     
             //SDカード値格納---------------------------------------------------------------------------
             if(flag_SDwrite && SDcount < 30000){
+            // if(false){
                 if(flag_simu){
                     A[SDcount] = gPosi.y;
                     B[SDcount] = gPosi.x;
@@ -3523,7 +3722,8 @@ sprintf(str,"[INFO]bno on\n");
 
                     // z[i],,A[i],B[i],C[i],D[i],E[i],F[i],,a[i],b[i],G[i],H1[i],I[i],J[i],K[i],L4[i],,M[i],N[i],O[i],,c[i],d[i],e[i],P[i],Q[i],R[i],S[i],,f[i],g[i],h[i],j[i],k[i],l[i],m[i],n[i],o[i],p[i],q[i],r[i],s[i],t[i],u[i]\n
 
-                    z[SDcount] = timer.read_ms();
+                    // z[SDcount] = timer.read_ms();
+                    z[SDcount] = t1.read_ms();
 
                     // %lf,%lf,%lf,%lf,%lf,%lf,
 
@@ -3584,6 +3784,7 @@ sprintf(str,"[INFO]bno on\n");
                     l[SDcount] = stepdown_count;
 
                     m[SDcount] = kouden1read;
+                    a1[SDcount] = kouden2read;
                     n[SDcount] = kouden3read;
                     o[SDcount] = air_state;
 
@@ -3697,22 +3898,22 @@ sprintf(str,"[INFO]bno on\n");
                 SDcount++;
             }
 
-            if(flag_simu && flag_comm){
-                int num = sprintf(sbuf,
-                            "%.4lf,%.4lf,%.4lf,Hello World,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%d;%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%d,"
-                            "%d,%.4lf,%d,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf\n",
-                            refV.x, refV.y, refV.z,autonomous.R2_Adjacent_count,autonomous.next_indices,autonomous.syusoku,autonomous.collect_count,cubePosi.x,cubePosi.y,autonomous.nextX,autonomous.nextY,interval_time, autonomous.phase,autonomous.gettheta_b() - autonomous.gettheta_a(),refV.x, refV.y, refV.z,gPosi.x,gPosi.y,gPosi.z,nextPhase,A[SDcount-1], B[SDcount-1], C[SDcount-1], D[SDcount-1],
-                            E[SDcount-1], F[SDcount-1], K[SDcount-1], a[SDcount-1], b[SDcount-1], G[SDcount-1],d[SDcount-1], H1[SDcount-1], I[SDcount-1],
-                            J[SDcount-1],L4[SDcount - 1],N[SDcount-1]);
-                //cubePosi3.x,cubePosi3.y,cubePosi3.z
-                // int num = sprintf(sbuf,
-                //           "%.4lf,%.4lf,%.4lf;%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%d,"
-                //           "%d,%.4lf,%d,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf\n",
-                //           refV.x, refV.y, refV.z, A[SDcount-1], B[SDcount-1], C[SDcount-1], D[SDcount-1],
-                //           E[SDcount-1], F[SDcount-1], K[SDcount-1], a[SDcount-1], b[SDcount-1], G[SDcount-1],d[SDcount-1], H1[SDcount-1], I[SDcount-1],
-                //           J[SDcount-1],L4[SDcount - 1],N[SDcount-1]);
-                sendData_maicon(sbuf, num);
-            }
+            // if(flag_simu && flag_comm){
+            //     int num = sprintf(sbuf,
+            //                 "%.4lf,%.4lf,%.4lf,Hello World,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%d;%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%d,"
+            //                 "%d,%.4lf,%d,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf\n",
+            //                 refV.x, refV.y, refV.z,autonomous.R2_Adjacent_count,autonomous.next_indices,autonomous.syusoku,autonomous.collect_count,cubePosi.x,cubePosi.y,autonomous.nextX,autonomous.nextY,interval_time, autonomous.phase,autonomous.gettheta_b() - autonomous.gettheta_a(),refV.x, refV.y, refV.z,gPosi.x,gPosi.y,gPosi.z,nextPhase,A[SDcount-1], B[SDcount-1], C[SDcount-1], D[SDcount-1],
+            //                 E[SDcount-1], F[SDcount-1], K[SDcount-1], a[SDcount-1], b[SDcount-1], G[SDcount-1],d[SDcount-1], H1[SDcount-1], I[SDcount-1],
+            //                 J[SDcount-1],L4[SDcount - 1],N[SDcount-1]);
+            //     //cubePosi3.x,cubePosi3.y,cubePosi3.z
+            //     // int num = sprintf(sbuf,
+            //     //           "%.4lf,%.4lf,%.4lf;%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf,%d,"
+            //     //           "%d,%.4lf,%d,%.4lf,%.4lf,%.4lf,%.4lf,%.4lf\n",
+            //     //           refV.x, refV.y, refV.z, A[SDcount-1], B[SDcount-1], C[SDcount-1], D[SDcount-1],
+            //     //           E[SDcount-1], F[SDcount-1], K[SDcount-1], a[SDcount-1], b[SDcount-1], G[SDcount-1],d[SDcount-1], H1[SDcount-1], I[SDcount-1],
+            //     //           J[SDcount-1],L4[SDcount - 1],N[SDcount-1]);
+            //     sendData_maicon(sbuf, num);
+            // }
             pre_buttonState_E = buttonState_E;
    
         flag_int = false; // flagを下す．
@@ -3737,7 +3938,7 @@ sprintf(str,"[INFO]bno on\n");
         // sprintf(str,"g,%4.4lf,%4.4lf,%4.4lf ", gPosi.x, gPosi.y, gPosi.z);
         // invoke_print(str);
         // // // // //速度指令
-        sprintf(str,"%4.4lf,%4.4lf,%4.4lf phase:%d  %d  %d  %d  %d  %d %d %lf %lf %lf %lf %d %d %lf %d %d", refV.x, refV.y, refV.z,autonomous.phase,roboclawCmd0,roboclawCmd1,roboclawCmd2,limit8read,limit9read,flag_lift,front_lift_posi,back_lift_posi,ref_lift_front_posi,ref_lift_back_posi,stepup_count,air_state,vel_lift_back,air_state,stepup_flag);
+        sprintf(str,"x:%4.4lf,y:%4.4lf,z:%4.4lf vx:%4.4lf,vy;%4.4lf,vz:%4.4lf phase:%d  %d  %d  %d  %d  %d %d %lf %lf %lf %lf %d %d %lf %d %d, %d, %d, %d , %d,get::%4.4lf,%4.4lf,%4.4lf,%4.4lf,%4.4lf\n", gPosi.x, gPosi.y, gPosi.z,refV.x,refV.y,refV.z,autonomous.phase,roboclawCmd0,roboclawCmd1,roboclawCmd2,limit8read,limit9read,flag_lift,front_lift_posi,back_lift_posi,ref_lift_front_posi,ref_lift_back_posi,stepup_count,air_state,vel_lift_back,air_state,stepup_flag,kouden1read,kouden2read,kouden3read,mode,getPosi.x,getPosi.y,getPosi.z,distance_front,lrtbPosi.x);
         // sprintf(str,"%lf,%lf,%lf,%lf,%lf,%lf,%d,%d\n",autonomous.forest[route[autonomous.route_num].num].x,autonomous.forest[route[autonomous.route_num].num].y,autonomous.forest[route[autonomous.route_num + 1].num].x,autonomous.forest[route[autonomous.route_num + 1].num].y,autonomous.diffx,autonomous.diffy,autonomous.direction_flag,autonomous.phase);
         invoke_print(str);
 
@@ -4055,7 +4256,7 @@ sprintf(str,"[INFO]bno on\n");
         send_yawl = 0;
 
 
-        mode = 2;
+        // mode = 2;
         
         //pcに送信するデータ
         // send_data[0] = receive_collect_ball[0];
@@ -4080,7 +4281,7 @@ sprintf(str,"[INFO]bno on\n");
         send_data[17] = send_pitchl & 0xFF;
         send_data[18] = (send_yawl >> 8 & 0x7F) | sign3;
         send_data[19] = send_yawl & 0xFF;
-        send_data[20] = mode;
+        send_data[20] = 2;//mode;
         send_data[21] = '\n';
 
         // send_data[11] = SDcount >> 8 & 0xFF;
