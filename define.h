@@ -14,9 +14,9 @@
 #define back_lift_init  195//0//204.91//196.002715//0//204.91//195//
 // -397.751118 -196.002715
 
-#define HIGH_COLLECT_POSI   215//192//222.48
+#define HIGH_COLLECT_POSI   235//215//192//222.48
 #define LOW_COLLECT_POSI     30//22.48
-#define STORAGE_POSI         91//92.48
+#define STORAGE_POSI         88//91//92.48
 
 #define STEP_UP_FRONT_HIGH     240
 #define STEP_UP_FRONT_LOW      -20

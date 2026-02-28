@@ -534,12 +534,13 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         //     ;
         motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
-        set_para(forest[route[route_num].num].x, forest[route[route_num].num].y, setz, 1.0, 3.00, 3.00);
+        set_para(forest[route[route_num].num].x, forest[route[route_num].num].y, setz, 1.0, 1.00, 1.00);
         phase = 203;
         }
     break;
     case 203: //旋回
         refV = pathTrackingMode(POSITION_PID, 0, 204, DEFAULT);
+        // phase = 204;
     break;
     case 204: //1
         switch (route[route_num + 1].mode) {
@@ -599,7 +600,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
         if(hight_flag == -2){
-            low_collect = 100;
+            low_collect = 0.050;
         }else {
             low_collect = 0;
         }
@@ -614,10 +615,10 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
             break;
             case DLEFT:
                 setx = forest[route[route_num].num].x;
-                sety = forest[route[route_num].num].y - EDGE_MOVE - low_collect;
+                sety = forest[route[route_num].num].y - EDGE_MOVE + low_collect;
             break;
             case DBACK:
-                setx = forest[route[route_num].num].x - EDGE_MOVE - low_collect;
+                setx = forest[route[route_num].num].x - EDGE_MOVE + low_collect;
                 sety = forest[route[route_num].num].y;
             break;
         }
@@ -629,6 +630,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     break;
     case 212: //回収地点に行く
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 213, DEFAULT);
+        // refV = pathTrackingMode(POSITION_PID, 0, 213, DEFAULT);
     break;
     // case 2213:
     //     // if(hight_flag == -2)
@@ -641,7 +643,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         send_num = 10;//回収していいよ！！
         motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
-        set_para(forest[route[route_num].num].x, forest[route[route_num].num].y, setz, 1.0, 3.00, 3.00);
+        set_para(forest[route[route_num].num].x, forest[route[route_num].num].y, setz, 1.0, 1.00, 1.00);
         if(up_num == 3)//回収したとき
             phase = 2214;
     break;
@@ -677,6 +679,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     case 214://MFの中心に戻る
         // send_num = 11;
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 215, DEFAULT);
+        // refV = pathTrackingMode(POSITION_PID, 0, 215, DEFAULT);
     break;
     case 215:
         //次が回収しないで段越えのときは昇降そのまま
@@ -684,7 +687,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         // route[route_num + 1] = route[route_num];
         // route_num += 1;
 
-        if(hight_flag == 2 && hight_flag2 == 2){
+        if(hight_flag == 2 && hight_flag2 == 2 && route[route_num+1].num == 2){
             set_front_posi = HIGH_COLLECT_POSI;
             flag_hi2hi = true;
             phase = 216;
@@ -745,7 +748,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
                 // set_front_posi = HIGH_COLLECT_POSI;
                 motion.setPathNum(0, 0);
                 setConvPara(0.01, 0.998);
-                set_para(forest[route[route_num + 1].num].x, forest[route[route_num + 1].num].y, setz, 1.0, 3.00, 3.00);
+                set_para(forest[route[route_num + 1].num].x, forest[route[route_num + 1].num].y, setz, 1.0, 1.00, 1.00);
                 phase = 221;
             break;
             case -2:
@@ -759,6 +762,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     break;
     case 221://同段の通過
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 222, DEFAULT);
+        // refV = pathTrackingMode(POSITION_PID, 0, 222, DEFAULT);
     break;
     case 222:
         route_num += 1;
@@ -794,6 +798,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
 
     case 224: //はじにいどうする
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 2225, DEFAULT);
+        // refV = pathTrackingMode(POSITION_PID, 0, 2225, DEFAULT);
     break;
 
     case 2225:
@@ -804,7 +809,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     case 225://mainで登った，または降りたらこのフェーズに移行するに
         motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
-        set_para(forest[route[route_num + 1].num].x, forest[route[route_num + 1].num].y, setz, 0.5, 3.00, 3.00);
+        set_para(forest[route[route_num + 1].num].x, forest[route[route_num + 1].num].y, setz, 0.5, 1.00, 1.00);
         if(flag_hi2hi){
             if(up_num == 4){
             route_num += 1;
@@ -818,6 +823,8 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
 
     case 226://次のマスの中心に移動する
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 227, DEFAULT);
+        // refV = pathTrackingMode(POSITION_PID, 0, 227, DEFAULT);
+
         // route_num += 1;
     break;
 
@@ -857,7 +864,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
         if(hight_flag == -2){
-            low_collect = 100;
+            low_collect = 0.050;
         }else {
             low_collect = 0;
         }
@@ -872,19 +879,20 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
             break;
             case DLEFT:
                 setx = forest[route[route_num].num].x;
-                sety = forest[route[route_num].num].y - EDGE_MOVE - low_collect;
+                sety = forest[route[route_num].num].y - EDGE_MOVE + low_collect;
             break;
             case DBACK:
-                setx = forest[route[route_num].num].x - EDGE_MOVE - low_collect;
+                setx = forest[route[route_num].num].x - EDGE_MOVE + low_collect;
                 sety = forest[route[route_num].num].y;
             break;
         }
-        set_para(setx, sety, setz, 0.5, 3.00, 3.00);
+        set_para(setx, sety, setz, 0.5, 1.00, 1.00);
         phase = 232;
     break;
 
     case 232: //はじに移動する
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 233, DEFAULT);
+        // refV = pathTrackingMode(POSITION_PID, 0, 233, DEFAULT);
     break;
 
     case 233: //mainで前の昇降が収束していたら234にする
@@ -924,12 +932,13 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
                 sety = forest[route[route_num].num].y;
             break;
         }
-        set_para(setx, sety, setz, 0.5, 3.00, 3.00);
+        set_para(setx, sety, setz, 0.5, 1.00, 1.00);
         phase = 2351;
     break;
 
     case 2351: //はじに移動する
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 235, DEFAULT);
+        // refV = pathTrackingMode(POSITION_PID, 0, 235, DEFAULT);
     break;
 
 
@@ -961,7 +970,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         set_front_posi = STORAGE_POSI;
         motion.setPathNum(0, 0);
         setConvPara(0.01, 0.998);
-        set_para(forest[route[route_num + 1].num].x, forest[route[route_num + 1].num].y, setz, 1.0, 3.00, 3.00);
+        set_para(forest[route[route_num + 1].num].x, forest[route[route_num + 1].num].y, setz, 1.0, 1.00, 1.00);
         route_num += 1;
         phase = 237;
     break;
@@ -971,6 +980,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         if(front_syusoku && up_num == 5)
             send_num = 12;
         refV = pathTrackingMode(FOLLOW_COMMAND, 0, 238, DEFAULT);
+        // refV = pathTrackingMode(POSITION_PID, 0, 238, DEFAULT);
     break;
 
     case 238:

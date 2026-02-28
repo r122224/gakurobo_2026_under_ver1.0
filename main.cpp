@@ -36,22 +36,39 @@
 
 #include "UDPSocketComm.h"
 
-// |-----|-----|-----|
-// | 1 5 | 1 6 | 1 7 | 出口
-// |-----|-----|-----|
-// | 1 2 | 1 3 | 1 4 |
-// |-----|-----|-----|
-// |  9  | 1 0 | 1 1 |
-// |-----|-----|-----|
-// |  6  |  7  |  8  |
-// |-----|-----|-----|
-// |  3  |  4  |  5  |
-// |-----|-----|-----|
-// |  0  |  1  |  2  | 入口
-// |-----|-----|-----|
+// |---------|---------|---------|
+// |---1 5---|---1 6---|---1 7---| 出口
+// |---------|---------|---------|
+// | 1 2 (9) | 1 3(10) | 1 4(11) |
+// |---------|---------|---------|
+// |  9 (6)  | 1 0 (7) | 1 1 (8) |
+// |---------|---------|---------|
+// |  6 (3)  |  7 (4)  |  8 (5)  |
+// |---------|---------|---------|
+// |  3 (0)  |  4 (1)  |  5 (2)  |
+// |---------|---------|---------|
+// |----0----|----1----|----2----| 入口
+// |---------|---------|---------|
 
 // #define 
 //1:回収 2:通過 3:回収通過
+forest_route route[15] = {
+    {1,2},
+    {4,2},
+    {5,1},
+    {7,2},
+    {10,2},
+    {9,1},
+    {11,1},
+    {13,01},
+    {16,2},
+    {17,2},
+    {17,2},
+    {17,2},
+    {17,2},
+    {17,2},
+    {17,2}
+};
 // forest_route route[8] = {
 //     {1,2},
 //     {4,2},
@@ -73,23 +90,40 @@
 //     {14,1},
 //     {16,2}
 // };
-forest_route route[15] = {
-    {1,2},
-    {4,2},
-    {5,1},
-    {7,2},
-    {6,1},
-    {10,2},
-    {13,2},
-    {12,1},
-    {16,2},
-    {17,2},
-    {17,2},
-    {17,2},
-    {17,2},
-    {17,2},
-    {17,2}
-};
+// forest_route route[15] = {
+//     {1,2},
+//     {4,2},
+//     {5,1},
+//     {7,3},
+//     {8,1},
+//     {10,0},
+//     {13,2},
+//     {12,1},
+//     {16,2},
+//     {17,2},
+//     {17,2},
+//     {17,2},
+//     {17,2},
+//     {17,2},
+//     {17,2}
+// };
+// forest_route route[15] = {
+//     {1,2},
+//     {4,2},
+//     {5,1},
+//     {7,2},
+//     {6,1},
+//     {10,2},
+//     {13,2},
+//     {12,1},
+//     {16,2},
+//     {17,2},
+//     {17,2},
+//     {17,2},
+//     {17,2},
+//     {17,2},
+//     {17,2}
+// };
 
 #define UART 0
 #define TCP_SOCKET 1
@@ -2655,8 +2689,8 @@ sprintf(str,"[INFO]bno on\n");
                     case 13:
                         flag_use_front = false;
                         flag_use_in = false;
-                        flag_use_out = true;
-                        flag_use_back = false;
+                        flag_use_out = false;
+                        flag_use_back = true;
                     break;
                     case 14:
                         flag_use_front = false;
@@ -2674,7 +2708,7 @@ sprintf(str,"[INFO]bno on\n");
                         flag_use_front = false;
                         flag_use_in = false;
                         flag_use_out = false;
-                        flag_use_back = false;
+                        flag_use_back = true;
                     break;
                     case 17:
                         flag_use_front = false;
@@ -2941,9 +2975,9 @@ sprintf(str,"[INFO]bno on\n");
                         // if(next_box_state == 0){
                             if(flag_use_front && flag_lrtb_front){
                                 lrtbPosi.x = forest_Posi[cubeIndex].front - distance_front;
-                                if(cubeIndex == 16 && obj_state_test[10] == 0){
-                                    // lrtbPosi.x = forest_Posi[13].front - distance_front;
-                                }
+                                // if(cubeIndex == 16 && obj_state_test[10] == 0){
+                                //     // lrtbPosi.x = forest_Posi[13].front - distance_front;
+                                // }
                                 getPosi.x = platform.setAxisPosi(lrtbPosi.x, POSIX);
                             }
                             if(flag_use_back && flag_lrtb_back){
@@ -2952,27 +2986,27 @@ sprintf(str,"[INFO]bno on\n");
                             }
                             if(flag_use_in && flag_lrtb_in){
                                 // lrtbPosi.y = forest_Posi[cubeIndex].left + distance_in;
-                                if(cubeIndex == 15){
-                                    lrtbPosi.y = distance_in;
-                                    if(fabs(gPosi.y - lrtbPosi.y) < lrtb_diff_limit){
-                                        getPosi.y = platform.setAxisPosi(lrtbPosi.y, POSIY);
-                                    }
-                                }else{
+                                // if(cubeIndex == 15){
+                                //     lrtbPosi.y = distance_in;
+                                //     if(fabs(gPosi.y - lrtbPosi.y) < lrtb_diff_limit){
+                                //         getPosi.y = platform.setAxisPosi(lrtbPosi.y, POSIY);
+                                //     }
+                                // }else{
                                     lrtbPosi.y = forest_Posi[cubeIndex].left + distance_in;
                                     getPosi.y = platform.setAxisPosi(lrtbPosi.y, POSIY);
-                                }
+                                // }
                             }
                             if(flag_use_out && flag_lrtb_out){
                                 // lrtbPosi.y = forest_Posi[cubeIndex].right - distance_out;
-                                if(cubeIndex == 17){
-                                    lrtbPosi.y = 6.0 - distance_out;
-                                    if(fabs(gPosi.y - lrtbPosi.y) < lrtb_diff_limit){
-                                        getPosi.y = platform.setAxisPosi(lrtbPosi.y, POSIY);
-                                    }
-                                }else{
+                                // if(cubeIndex == 17){
+                                //     lrtbPosi.y = 6.0 - distance_out;
+                                //     if(fabs(gPosi.y - lrtbPosi.y) < lrtb_diff_limit){
+                                //         getPosi.y = platform.setAxisPosi(lrtbPosi.y, POSIY);
+                                //     }
+                                // }else{
                                     lrtbPosi.y = forest_Posi[cubeIndex].right - distance_out;
                                     getPosi.y = platform.setAxisPosi(lrtbPosi.y, POSIY);
-                                }
+                                // }
                             }
                         // }
                         // platform.setPosi(coords {gPosi.x, 0.15 + 0.365 - 0.025 , INIT_Z});
@@ -3263,8 +3297,10 @@ sprintf(str,"[INFO]bno on\n");
                 case 1://上がる
                     ref_lift_front_posi = STEP_UP_FRONT_LOW;
                     ref_lift_back_posi = STEP_UP_BACK_LOW;
-                    if(back_syusoku == 1 && front_syusoku == 1)
+                    if(back_syusoku == 1 && front_syusoku == 1){
                         stepup_count = 2;
+                        setPosi.z = gPosi.y;
+                    }
                 break;
                 case 2://前移動
                     ref_lift_front_posi = STEP_UP_FRONT_LOW;
@@ -3298,18 +3334,22 @@ sprintf(str,"[INFO]bno on\n");
                         case DFRONT:
                             setPosi.x = autonomous.forest[route[autonomous.route_num].num].x + 0.889;
                             getPosi.x = platform.setAxisPosi(setPosi.x, POSIX);
+                            getPosi.y = platform.setAxisPosi(setPosi.z, POSIY);
                         break;
                         case DRIGHT:
                             setPosi.y = autonomous.forest[route[autonomous.route_num].num].y + 0.889;
                             getPosi.y = platform.setAxisPosi(setPosi.y, POSIY);
+                            getPosi.x = platform.setAxisPosi(setPosi.z, POSIX);
                         break;
                         case DLEFT:
                             setPosi.y = autonomous.forest[route[autonomous.route_num].num].y - 0.889;
                             getPosi.y = platform.setAxisPosi(setPosi.y, POSIY);
+                            getPosi.x = platform.setAxisPosi(setPosi.z, POSIX);
                         break;
                         case DBACK:
                             setPosi.x = autonomous.forest[route[autonomous.route_num].num].x - 0.889;
                             getPosi.x = platform.setAxisPosi(setPosi.x, POSIX);
+                            getPosi.y = platform.setAxisPosi(setPosi.z, POSIY);
                         break;
                     }
                     if(back_syusoku == 1 && front_syusoku == 1){
