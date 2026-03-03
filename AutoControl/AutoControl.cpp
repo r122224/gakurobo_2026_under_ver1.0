@@ -474,7 +474,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
         setConvPara(0.01, 0.998);
         // route[0].num;
         route_num = 0;
-        set_para(forest[route[route_num].num].x, forest[route[route_num].num].y, 0.000, 1.5, 3.00, 3.00);
+        set_para(forest[route[route_num].num].x, forest[route[route_num].num].y, 0.000, 2.0, 3.00, 3.00);
         phase = 201;
     break;
     case 201: //forest前に移動
@@ -545,13 +545,16 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
     case 204: //1
         switch (route[route_num + 1].mode) {
             case 1://回収
-                phase = 210;
+                if(up_num == 4 || up_num == 0)
+                    phase = 210;
             break;
             case 2://通過
-                phase = 220;
+                if(up_num == 4 || up_num == 0)
+                    phase = 220;
             break;
             case 3://回収通過
-                phase = 230;
+                if(up_num == 4 || up_num == 0)
+                    phase = 230;
             break;
         }
     break;
@@ -594,6 +597,7 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
             break;
         }
         phase = 211;
+        // refV = pathTrackingMode(POSITION_PID, 0, 211, DEFAULT);
     break;
     case 211:
         //前に移動．ただし，上回収のときはきをつける
@@ -699,9 +703,10 @@ coords AutoControl::getRefVel(unsigned int nextPhase) {
                 // phase = 202;
             }
         }
-        if(up_num == 4){
-            phase = 216;
-        }
+        // if(up_num == 4){
+        //     phase = 216;
+        // }
+        phase = 216;
             //収束したら格納していいよ，格納
             //格納終わったらphase = 202に返す
 

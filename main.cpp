@@ -293,12 +293,21 @@ bool receiveData(int mode){
 #define RIGHT_CAM_INIT_YAW 720
 #define RIGHT_CAM_MAX_YAW 1600//外側
 
-#define RIGHT_CAM_MIN_PITCH_POS 5003//下
-#define RIGHT_CAM_INIT_PITCH_POS 6240// 6422
-#define RIGHT_CAM_MAX_PITCH_POS 7788//上
-#define RIGHT_CAM_MIN_YAW_POS 2068//内側
-#define RIGHT_CAM_INIT_YAW_POS 3567//607
-#define RIGHT_CAM_MAX_YAW_POS 13179//外側
+// pitch:6415,yaw:3603,pitch:7850,yaw:6810
+
+// #define RIGHT_CAM_MIN_PITCH_POS 5003//下
+// #define RIGHT_CAM_INIT_PITCH_POS 6240// 6422
+// #define RIGHT_CAM_MAX_PITCH_POS 7788//上
+// #define RIGHT_CAM_MIN_YAW_POS 2068//内側
+// #define RIGHT_CAM_INIT_YAW_POS 3567//607
+// #define RIGHT_CAM_MAX_YAW_POS 13179//外側
+
+#define RIGHT_CAM_MIN_PITCH_POS 5110//下
+#define RIGHT_CAM_INIT_PITCH_POS 6415// 6422
+#define RIGHT_CAM_MAX_PITCH_POS 7780//上
+#define RIGHT_CAM_MIN_YAW_POS 5100//内側
+#define RIGHT_CAM_INIT_YAW_POS 3600//607
+#define RIGHT_CAM_MAX_YAW_POS 16210//外側
 #define RIGHT_CAM_PITCH_RES 16384
 #define RIGHT_CAM_YAW_RES 16384
 // 6240 3567 7848 6799
@@ -311,16 +320,76 @@ bool receiveData(int mode){
 #define LEFT_CAM_INIT_YAW 2670
 #define LEFT_CAM_MAX_YAW 2970//内側
 
-#define LEFT_CAM_MIN_PITCH_POS 1628//上
-#define LEFT_CAM_INIT_PITCH_POS 7854//7900
-#define LEFT_CAM_MAX_PITCH_POS 12862//下
-#define LEFT_CAM_MIN_YAW_POS 9715//内側
+// #define LEFT_CAM_MIN_PITCH_POS 1628//上
+// #define LEFT_CAM_INIT_PITCH_POS 7854//7900
+// #define LEFT_CAM_MAX_PITCH_POS 12862//下
+// #define LEFT_CAM_MIN_YAW_POS 9715//内側
+// #define LEFT_CAM_INIT_YAW_POS 6800//6660
+// #define LEFT_CAM_MAX_YAW_POS 6424//外側
+// #define LEFT_CAM_PITCH_RES 16384
+// #define LEFT_CAM_YAW_RES 16384
+
+#define LEFT_CAM_MIN_PITCH_POS 6200//上
+#define LEFT_CAM_INIT_PITCH_POS 7850//7900
+#define LEFT_CAM_MAX_PITCH_POS 9200//下
+#define LEFT_CAM_MIN_YAW_POS 5320//内側
 #define LEFT_CAM_INIT_YAW_POS 6800//6660
-#define LEFT_CAM_MAX_YAW_POS 6424//外側
+#define LEFT_CAM_MAX_YAW_POS 10520//外側
 #define LEFT_CAM_PITCH_RES 16384
 #define LEFT_CAM_YAW_RES 16384
-
 #define SERVO_RES 4095
+
+
+#define CAM_MECHA_DIST 0.49206
+#define CAM_MECHA_DEG 47.88
+
+#define CAM_DIST_POS 0.015 //
+#define CAM_DIST_POS2 0.013 //
+
+
+double cam1_mecha_pos_x = 0.0; //カメラ機構までの
+double cam1_mecha_pos_y = 0.0; //カメラ機構までの
+double cam1_mecha_to_pos_x = 0.0; //カメラ機構からの
+double cam1_mecha_to_pos_y = 0.0; //カメラ機構からの
+double cam1_pos_x = 0.0;
+double cam1_pos_y = 0.0;
+double cam1_deg = 0.0;
+double cam2_mecha_pos_x = 0.0; //カメラ機構までの
+double cam2_mecha_pos_y = 0.0; //カメラ機構までの
+double cam2_mecha_to_pos_x = 0.0; //カメラ機構からの
+double cam2_mecha_to_pos_y = 0.0; //カメラ機構からの
+double cam2_pos_x = 0.0;
+double cam2_pos_y = 0.0;
+double cam2_deg = 0.0;
+
+
+ ////カメラ機構のみでの座標
+            // double right_h = 0.015 + abs(cos(get_cam1_pitch_angle)*0.013);
+            // double left_h = 0.015 + abs(cos(get_cam2_pitch_angle)*0.013);
+
+            // double right_x = cos(get_cam1_yaw_angle)*right_h;
+            // double right_y = sin(get_cam1_yaw_angle)*right_h;
+
+            // double left_x = cos(get_cam2_yaw_angle)*left_h;
+            // double left_y = sin(get_cam2_yaw_angle)*left_h;
+
+            // pc.printf("x:%lf, y:%lf, h:%lf, x:%lf, y:%lf, h%lf\t",right_x,right_y,right_h,left_x,left_y,left_h);
+
+
+            // // カメラ機構の回転中心の座標
+            // // 0.49206 47.88ど
+            // double right_deg = 47.88/180*M_PI + gPosi.z;
+            // double left_deg = -47.88/180*M_PI + gPosi.z;
+
+            // double cam_right_x = cos(right_deg) * 0.49206;
+            // double cam_right_y = sin(right_deg) * 0.48206;
+
+            // double cam_left_x = cos(left_deg) * 0.49206;
+            // double cam_left_y = sin(left_deg) * 0.48206;
+
+            // pc.printf("g:%lf,x:%lf, y:%lf, h:%lf, x:%lf, y:%lf, h%lf\n",gPosi.z,cam_right_x,cam_right_y,right_deg,cam_left_x,cam_left_y,left_deg);
+
+
 
 //中心
 #define CORE_MIN_ANGLE 1450//後ろ側
@@ -483,9 +552,12 @@ DigitalIn kouden1(P1_7);
 bool kouden1read = 1;//前昇降下向き
 bool kouden2read = 1;
 bool kouden3read = 1;
+bool kouden4read = 1;//前昇降内側 あり１ない0
 bool pre_kouden1read = 1;//段ない時1
 bool pre_kouden2read = 1;//段ない時1 外側
 bool pre_kouden3read = 1;//内側
+bool pre_kouden4read = 1;//内側
+
 
 bool limit1read, limit2read, limit3read, limit4read, limit5read, limit6read, limit7read, limit8read, limit9read;
 bool pre_limit1read = false, pre_limit2read = false, pre_limit3read = false, pre_limit4read = false, pre_limit5read = false, pre_limit6read = false, pre_limit7read = false, pre_limit8read = false, pre_limit9read = false;
@@ -1433,6 +1505,38 @@ void rotate_cam2(double pitch, double yaw){ // rad
 int ms_qpps(double vel, int ppr, double d, double gia){//m/s ,分解能 ,半径 ,ギア比
     int qpps;
     return qpps = int(2 * vel * gia * ppr / d / M_PI);
+}
+
+ ////カメラ機構のみでの座標
+            // double right_h = 0.015 + abs(cos(get_cam1_pitch_angle)*0.013);
+            // double left_h = 0.015 + abs(cos(get_cam2_pitch_angle)*0.013);
+
+            // double right_x = cos(get_cam1_yaw_angle)*right_h;
+            // double right_y = sin(get_cam1_yaw_angle)*right_h;
+
+            // double left_x = cos(get_cam2_yaw_angle)*left_h;
+            // double left_y = sin(get_cam2_yaw_angle)*left_h;
+
+            // pc.printf("x:%lf, y:%lf, h:%lf, x:%lf, y:%lf, h%lf\t",right_x,right_y,right_h,left_x,left_y,left_h);
+
+
+            // // カメラ機構の回転中心の座標
+            // // 0.49206 47.88ど
+            // double right_deg = 47.88/180*M_PI + gPosi.z;
+            // double left_deg = -47.88/180*M_PI + gPosi.z;
+
+            // double cam_right_x = cos(right_deg) * 0.49206;
+            // double cam_right_y = sin(right_deg) * 0.48206;
+
+            // double cam_left_x = cos(left_deg) * 0.49206;
+            // double cam_left_y = sin(left_deg) * 0.48206;
+
+            // pc.printf("g:%lf,x:%lf, y:%lf, h:%lf, x:%lf, y:%lf, h%lf\n",gPosi.z,cam_right_x,cam_right_y,right_deg,cam_left_x,cam_left_y,left_deg);
+
+//カメラ座標
+double get_cam_posi(){
+    // double cam1_mecha_pos_x = CAM_MECHA_DIST*
+    return 0.0;
 }
 
 
@@ -2397,8 +2501,11 @@ sprintf(str,"[INFO]bno on\n");
                 
                 for(int i = 11; i >= 0; i--){
                     limitdata[i] = lim.sensorData[i];
-                    // pc.printf("%d ",lim.sensorData[i]);
+                    // pc.printf("%d:%d, ",i,lim.sensorData[i]);
                 }
+                // pc.printf("\t");
+                //左からの２こめ
+                // pc.printf("%d\t ",lim.sensorData[1]);
                 flag_limitcomm = false;
             }
 
@@ -2416,6 +2523,7 @@ sprintf(str,"[INFO]bno on\n");
             kouden1read = kouden1.read();
             kouden2read = limitdata[8];//外側
             kouden3read = limitdata[6];//内側
+            kouden4read = limitdata[1];
 
             //HC-RS04------------------
             // front.trigger();
@@ -2450,6 +2558,53 @@ sprintf(str,"[INFO]bno on\n");
             cam_yaw = get_cam1_yaw_angle;
             cam_pitch2 = get_cam2_pitch_angle;
             cam_yaw2 = get_cam2_yaw_angle;
+
+            // pc.printf("pitch:%d,yaw:%d,pitch:%d,yaw:%d\t",get_cam1_pitch_count,get_cam1_yaw_count,get_cam2_pitch_count,get_cam2_yaw_count);
+            // pc.printf("pitch:%lf,yaw:%lf,pitch:%lf,yaw:%lf\t",get_cam1_pitch_angle,cos(get_cam1_yaw_angle),get_cam2_pitch_angle,cos(get_cam2_yaw_angle));
+
+            // double right_h = 0.015 + abs(cos(get_cam1_pitch_angle)*0.013);
+            // double left_h = 0.015 + abs(cos(get_cam2_pitch_angle)*0.013);
+
+            // double right_x = cos(get_cam1_yaw_angle)*0.028;
+            // double right_y = sin(get_cam1_yaw_angle)*0.028;
+
+            // double left_x = cos(get_cam2_yaw_angle)*0.028;
+            // double left_y = sin(get_cam2_yaw_angle)*0.028;
+
+            ////カメラ機構のみでの座標
+            double right_h = 0.015 + abs(cos(get_cam1_pitch_angle)*0.013);
+            double left_h = 0.015 + abs(cos(get_cam2_pitch_angle)*0.013);
+
+            double right_x = cos(get_cam1_yaw_angle)*right_h;
+            double right_y = sin(get_cam1_yaw_angle)*right_h;
+
+            double left_x = cos(get_cam2_yaw_angle)*left_h;
+            double left_y = sin(get_cam2_yaw_angle)*left_h;
+
+            pc.printf("x:%lf, y:%lf, h:%lf, x:%lf, y:%lf, h%lf\t",right_x,right_y,right_h,left_x,left_y,left_h);
+
+
+            // カメラ機構の回転中心の座標
+            // 0.49206 47.88ど
+            double right_deg = 47.88/180*M_PI + gPosi.z;
+            double left_deg = -47.88/180*M_PI + gPosi.z;
+
+            double cam_right_x = cos(right_deg) * 0.49206;
+            double cam_right_y = sin(right_deg) * 0.48206;
+
+            double cam_left_x = cos(left_deg) * 0.49206;
+            double cam_left_y = sin(left_deg) * 0.48206;
+
+            pc.printf("g:%lf,x:%lf, y:%lf, h:%lf, x:%lf, y:%lf, h%lf\n",gPosi.z,cam_right_x,cam_right_y,right_deg,cam_left_x,cam_left_y,left_deg);
+
+
+
+
+
+
+
+
+
             //昇降位置変換
             // get_air_angle = -(double)count2rad(enc_air_angle.getAbsCount(),AIR_INIT_ANGLE_POSI,AIR_ANGLE_RES);
             // double front_lift_diff = dist_count(get_lift_front_count,pre_get_lift_front_count,FRONT_R);
@@ -3140,6 +3295,7 @@ sprintf(str,"[INFO]bno on\n");
                     break;
                 }
             }
+            // if((autonomous.phase == 224 || ))
             // else if(!limit4read && !limit5read){//右
             //     platform.setPosi(coords {2.0, 2.0, 1.0});
             // }else if(!limit6read && !limit7read){//左
@@ -3233,6 +3389,8 @@ sprintf(str,"[INFO]bno on\n");
                                 ref_lift_back_posi = STEP_DOWN_BACK_LOW;
                             }
                         break;
+                        default:
+                            autonomous.phase = 236;
                     }
                 }
                 //212,232,224
@@ -3575,6 +3733,7 @@ sprintf(str,"[INFO]bno on\n");
         pre_kouden1read = kouden1read;
         pre_kouden2read = kouden2read;
         pre_kouden3read = kouden3read;
+        pre_kouden4read = kouden4read;
 
         
 
@@ -3980,7 +4139,7 @@ sprintf(str,"[INFO]bno on\n");
         // // // // //速度指令
         sprintf(str,"x:%4.4lf,y:%4.4lf,z:%4.4lf vx:%4.4lf,vy;%4.4lf,vz:%4.4lf phase:%d  %d  %d  %d  %d  %d %d %lf %lf %lf %lf %d %d %lf %d %d, %d, %d, %d , %d,get::%4.4lf,%4.4lf,%4.4lf,%4.4lf,%4.4lf\n", gPosi.x, gPosi.y, gPosi.z,refV.x,refV.y,refV.z,autonomous.phase,roboclawCmd0,roboclawCmd1,roboclawCmd2,limit8read,limit9read,flag_lift,front_lift_posi,back_lift_posi,ref_lift_front_posi,ref_lift_back_posi,stepup_count,air_state,vel_lift_back,air_state,stepup_flag,kouden1read,kouden2read,kouden3read,mode,getPosi.x,getPosi.y,getPosi.z,distance_front,lrtbPosi.x);
         // sprintf(str,"%lf,%lf,%lf,%lf,%lf,%lf,%d,%d\n",autonomous.forest[route[autonomous.route_num].num].x,autonomous.forest[route[autonomous.route_num].num].y,autonomous.forest[route[autonomous.route_num + 1].num].x,autonomous.forest[route[autonomous.route_num + 1].num].y,autonomous.diffx,autonomous.diffy,autonomous.direction_flag,autonomous.phase);
-        invoke_print(str);
+        // invoke_print(str);
 
         // sprintf(str, "%d, %lf, %lf, %d",roboclawCmd2,);
         
